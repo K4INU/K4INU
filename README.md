@@ -1,4 +1,4 @@
-- 👋 Hi, I’m @K4INU
+- 👋 Hi, I’m @Kainu
 
 Im here for the lols
 
