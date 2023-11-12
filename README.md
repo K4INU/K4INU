@@ -1,6 +1,9 @@
 - 👋 Hi, I’m Kainu
 
-Im here for the lols
+I am a Security Professional, specializing in Incident Response, Digital Forensics, Threat Managment, etc.
+
+
+i enjoy writing code to help with these functions. cheers.
 
 
 
