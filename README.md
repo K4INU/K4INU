@@ -43,7 +43,7 @@
         <img src="https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png" alt="Kainu.codes" style="width: 20%; height: auto; margin: 0 5px;">
     </a>
      <a href="https://defcon.org/">
-        <img src="https://media.defcon.org/fancyindex/smiley-faded.png" style="filter: invert(100%); width: 20%; height: auto; margin: 0 5px;">
+        <img src="https://media.defcon.org/fancyindex/favicon.ico" style="width: 20%; height: auto; margin: 0 5px;">
     </a>
 </div>
 
