@@ -37,7 +37,7 @@
         <img src="https://www.mentalhealthhackers.org/wp-content/uploads/2019/04/mhh-final-logo-sq25-e1554156125119.png" alt="Mental Health Hackers" style="width: 20%; height: auto; margin: 0 5px;">
     </a>
     <a href="https://blueteamvillage.org/">
-        <img src="https://avatars.githubusercontent.com/u/37715780?s=200&v=4" alt="The Blue Team Village" style="width: 30%; height: auto; margin: 0 5px;">
+        <img src="https://pbs.twimg.com/profile_images/1283604516739461121/_Os44f5F_400x400.jpg" alt="The Blue Team Village" style="width: 20%; height: auto; margin: 0 5px;">
     </a>
     <a href="https://github.com/K4INU">
         <img src="https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png" alt="Kainu.codes" style="width: 20%; height: auto; margin: 0 5px;">
