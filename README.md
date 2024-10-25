@@ -14,7 +14,7 @@
 
 
 ### Scripts & Tools by *Kainu*.
-##### I just like to wright scripts to augment and simplify time consuming tasks. Nothing here is ground breaking, i just enjoy it :)
+##### I just like to write scripts to augment and simplify time consuming tasks. Nothing here is ground breaking, i just enjoy it :)
 
 ##### *Finders_Keepers*
 
