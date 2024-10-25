@@ -22,7 +22,7 @@
 
 ##### *IPGraveDigger*
 
-```script to bulk run abuseipdb info data to hunt for evil.```
+```Script to bulk run abuseipdb info data to hunt for evil.```
 ###### *Hash (sha256)*:``` ```
 
 ##### *Raven*
@@ -40,7 +40,7 @@
 
 ##### *DucksMayActuallyRejectChaos*
 
-```This script was made to bulk check spf, dkim and dmarc. it will spit out a csv for the findings.```
+```This script was made to bulk check spf, dkim and dmarc. It will spit out a csv for the findings.```
 
 ###### *Hash (sha256)*:``` ```
 
