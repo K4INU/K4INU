@@ -32,6 +32,11 @@
 ###### *Hash (sha256)*:``` ```
 
 
+##### *VirusTotal_MidnightMass*
+
+```This script was made to bulk dig on virustotal, you can do ips or hashes, but I primarily use it for hashes.```
+
+###### *Hash (sha256)*:``` ```
 ## Resources
 
 
