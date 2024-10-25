@@ -13,6 +13,7 @@
 - 🌐 Connect with me or check out my projects below!
 
 
+## Scripts developed and made by Kainu.
 
 ##### *Finders_Keepers*
 
