@@ -1,7 +1,13 @@
-# - 👋 Hi, I’m Kainu #
+# 👋 Hi, I’m Kainu #
 
-#### I am a Security Professional, specializing in Incident Response, Digital Forensics, Threat Managment, etc.
-#### I enjoy writing scripts to help with hunt for evil. cheers.
+#### I am a Security Professional with expertise in Incident Response, Digital Forensics, Threat Management, and more. 
+#### I love automating security processes and writing scripts to hunt for evil. Always on the lookout for the next challenge in cybersecurity. Cheers! 
+
+- 🔒 Passionate about securing systems and protecting data
+- ⚙️ Skilled in Python, PowerShell, and Bash scripting
+- 🕵️‍♂️ Always exploring new tools and techniques for threat hunting
+- 🌐 Connect with me or check out my projects below!
+
 
 ##### *Finders_Keepers.ps1*
 
