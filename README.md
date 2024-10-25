@@ -5,7 +5,7 @@
 </div>
 
 #### I am a Security Professional with expertise in Incident Response, Digital Forensics, Threat Management, and more. 
-#### I love automating security processes and writing scripts to hunt for evil. Always on the lookout for the next challenge in cybersecurity. Cheers! 
+#### I love automating security processes and writing scripts to hunt for evil. Cheers! 
 
 - 🔒 Passionate about securing systems and protecting data
 - ⚙️ Skilled in Python, PowerShell, and Bash scripting
