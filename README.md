@@ -37,8 +37,14 @@
 ```This script was made to bulk dig on virustotal, you can do ips or hashes, but I primarily use it for hashes.```
 
 ###### *Hash (sha256)*:``` ```
-## Resources
 
+##### *DucksMayActuallyRejectChaos*
+
+```This script was made to bulk check spf, dkim and dmarc. it will spit out a csv for the findings.```
+
+###### *Hash (sha256)*:``` ```
+
+## Resources
 
 <div style="display: flex; justify-content: center; align-items: center;">
     <a href="https://www.mentalhealthhackers.org/">
