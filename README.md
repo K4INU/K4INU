@@ -44,8 +44,6 @@
     </a>
      <a href="https://defcon.org/">
         <img src="https://media.defcon.org/fancyindex/smiley-faded.png" style="filter: invert(100%); width: 20%; height: auto; margin: 0 5px;">
-
-
     </a>
 </div>
 
