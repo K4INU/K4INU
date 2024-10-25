@@ -29,35 +29,28 @@
 ```This is a script I developed to help hunt against m365 purview's audit data. It has specific methods to hunt for irregular activity and looks for paterns related to EvilGinx attacks. This script has parts of IPGraveDigger in it and also includes ip info.```
 
 
-##Links for good causes
+##Resources (images are links)
 
-<div style="text-align: center;">
-    <img src="https://www.mentalhealthhackers.org/wp-content/uploads/2019/04/mhh-final-logo-sq25-e1554156125119.png" alt="BTV" style="width: 10%; height: auto;">
+
+<div style="display: flex; justify-content: center; align-items: center;">
+    <a href="https://www.mentalhealthhackers.org/">
+        <img src="https://www.mentalhealthhackers.org/wp-content/uploads/2019/04/mhh-final-logo-sq25-e1554156125119.png" alt="Mental Health Hackers" style="width: 10%; height: auto; margin: 0 10px;">
+    </a>
+    <a href="https://blueteamvillage.org/">
+        <img src="https://avatars.githubusercontent.com/u/37715780?s=200&v=4" alt="The Blue Team Village" style="width: 10%; height: auto; margin: 0 10px;">
+    </a>
+    <a href="https://github.com/K4INU">
+        <img src="https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png" alt="Kainu.codes" style="width: 10%; height: auto; margin: 0 10px;">
+    </a>
 </div>
 
-[Mental Health Hackers](https://www.mentalhealthhackers.org/)
-
-
-<div style="text-align: center;">
-    <img src="https://avatars.githubusercontent.com/u/37715780?s=200&v=4" alt="BTV" style="width: 10%; height: auto;">
-</div>
-
-[The Blue Team Village](https://blueteamvillage.org/)
-
-<div style="text-align: center;">
-    <img src="https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png" alt="BTV" style="width: 10%; height: auto;">
-</div>
-
-[My GitHub](https://github.com/K4INU)
 
 
 
 
 
 
-<div style="text-align: center;">
-    <img src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/e282158e-775e-4c20-8417-af35a54cdc7c/d4a5983-c7dfa6ca-ec77-4d35-9358-abdc33f446bd.gif?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcL2UyODIxNThlLTc3NWUtNGMyMC04NDE3LWFmMzVhNTRjZGM3Y1wvZDRhNTk4My1jN2RmYTZjYS1lYzc3LTRkMzUtOTM1OC1hYmRjMzNmNDQ2YmQuZ2lmIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.g8hxcuGXNlycRaEgOFhiqw9R1aslZnLf8Kin12Qa350" alt="BTV" style="width: 15%; height: auto;">
-</div>
+
 <!---
 K4INU/K4INU is a ✨ special ✨ repository because its `README.md` (this file) appears on your GitHub profile.
 You can click the Preview link to take a look at your changes.
