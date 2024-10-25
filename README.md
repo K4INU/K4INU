@@ -1,3 +1,6 @@
+
+![Alt text](data:image/png;base64,<Base64-encoded-string>)
+
 # 👋 Hi, I’m Kainu #
 
 #### I am a Security Professional with expertise in Incident Response, Digital Forensics, Threat Management, and more. 
@@ -24,12 +27,20 @@
 ```This is a script I developed to help hunt against m365 purview's audit data. It has specific methods to hunt for irregular activity and looks for paterns related to EvilGinx attacks. This script has parts of IPGraveDigger in it and also includes ip info.```
 
 
-  ##Links for good causes
-  
-  [Mental Health Hackers](https://www.mentalhealthhackers.org/)
-  
+##Links for good causes
 
-  [The Blue Team Village](https://blueteamvillage.org/)
+<div style="text-align: center;">
+    <img src="https://www.mentalhealthhackers.org/wp-content/uploads/2019/04/mhh-final-logo-sq25-e1554156125119.png" alt="BTV" style="width: 10%; height: auto;">
+</div>
+
+[Mental Health Hackers](https://www.mentalhealthhackers.org/)
+
+
+<div style="text-align: center;">
+    <img src="https://avatars.githubusercontent.com/u/37715780?s=200&v=4" alt="BTV" style="width: 10%; height: auto;">
+</div>
+
+[The Blue Team Village](https://blueteamvillage.org/)
 
 
 
