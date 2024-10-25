@@ -16,7 +16,7 @@
 
 ##### *Finders_Keepers*
 
-```Simple script to look for ipv4 ip addresses in csvs that are not parsed out. I make this to pull out ip addresses from paloalto fw logs as the activity is usually not parsed in a clean method. this data can then be deduplicated and ran against IPGraveDigger to run against abuseipdb for reputation```
+```Simple script to look for ipv4 ip addresses in csvs that are not parsed out. I made this to pull out ip addresses from paloalto fw logs as the activity is usually not parsed in a clean method. this data can then be deduplicated and ran against IPGraveDigger to run against abuseipdb for reputation```
 
 ###### *Hash (sha256)*:``` ```
 
