@@ -20,25 +20,25 @@
 
 ```Simple script to look for ipv4 ip addresses in csvs that are not parsed out. I made this to pull out ip addresses from paloalto fw logs as the activity is usually not parsed in a clean method. this data can then be deduplicated and ran against IPGraveDigger to run against abuseipdb for reputation```
 
-###### *Hash (sha256)*:``` ```
+
 
 ##### *IPGraveDigger*
 
 ```Script to bulk run abuseipdb info data to hunt for evil.```
-###### *Hash (sha256)*:``` ```
+
 
 
 ##### *VirusTotal_MidnightMass*
 
 ```This script was made to bulk dig on virustotal, you can do ips or hashes, but I primarily use it for hashes.```
 
-###### *Hash (sha256)*:``` ```
+
 
 ##### *DucksMayActuallyRejectChaos*
 
 ```This script was made to bulk check spf, dkim and dmarc. It will spit out a csv for the findings.```
 
-###### *Hash (sha256)*:``` ```
+
 
 ## Resources
 
