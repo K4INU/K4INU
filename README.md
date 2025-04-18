@@ -56,8 +56,6 @@
         <img src="https://media.defcon.org/fancyindex/favicon.ico" style=" height: auto; margin: 0 1px;">
     </a>
 </div>
-l
-
 
 
 
