@@ -16,6 +16,10 @@
 ### Scripts & Tools by *Kainu*.
 ##### I just like to write scripts to augment and simplify time consuming tasks. Nothing here is ground breaking, i just enjoy it :)
 
+##### *4n6Duck*
+
+```This simple script is intended for forensics enthusiasts to use with a USB Rubber Ducky payload device. It runs Hayabusa, Chainsaw, and ClamAV, collects additional artifacts, zips everything up, and posts the bundle to a private Discord for your review. It’s meant for home use, for example, checking your kid’s PC or helping Grandma if she’s picked up some malware. It is not intended for use in a professional environment. Use at your own risk.```
+
 ##### *Finders_Keepers*
 
 ```Simple script to look for ipv4 ip addresses in csvs that are not parsed out. I made this to pull out ip addresses from paloalto fw logs as the activity is usually not parsed in a clean method. this data can then be deduplicated and ran against IPGraveDigger to run against abuseipdb for reputation```
