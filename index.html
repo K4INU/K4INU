@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#07110f" />
+  <meta name="description" content="K4INU_OS — a DFIR and incident response portfolio by Kainu." />
+  <meta property="og:title" content="K4INU_OS // DFIR Workstation" />
+  <meta property="og:description" content="Incident response, digital forensics, threat management, scripts and tools." />
+  <meta property="og:type" content="website" />
+  <title>K4INU_OS // DFIR Workstation</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <noscript>
+    <div class="noscript">K4INU_OS uses a little JavaScript for the desktop interface. Enable JavaScript to launch the workstation.</div>
+  </noscript>
+
+  <div class="boot-screen" id="bootScreen" aria-hidden="true">
+    <pre id="bootLog"></pre>
+  </div>
+
+  <main class="desktop" id="desktop" aria-label="K4INU_OS desktop">
+    <div class="ambient-grid" aria-hidden="true"></div>
+    <div class="scanlines" id="scanlines" aria-hidden="true"></div>
+
+    <header class="desktop-status">
+      <div><span class="status-dot"></span> K4INU_OS <span class="muted">/ DFIR WORKSTATION</span></div>
+      <div class="status-right"><span id="statusMessage">SYSTEM NOMINAL</span><span class="mono" id="topClock">--:--</span></div>
+    </header>
+
+    <section class="hero-panel" aria-label="Introduction">
+      <div class="hero-kicker">OPERATOR // KAINU</div>
+      <h1>INCIDENT RESPONSE<br><span>WITHOUT THE NOISE.</span></h1>
+      <p>I build small security tools to augment and simplify time-consuming DFIR work.</p>
+      <div class="hero-actions">
+        <button class="ui-button primary" data-open="terminal">&gt; OPEN TERMINAL</button>
+        <button class="ui-button" data-open="projects">VIEW PROJECTS</button>
+      </div>
+      <div class="hero-meta">
+        <span>IR</span><span>DIGITAL FORENSICS</span><span>THREAT HUNTING</span><span>AUTOMATION</span>
+      </div>
+      <div class="credential-strip" aria-label="Community credentials">
+        <button class="credential-pill defcon" data-open="credentials">
+          <span class="pill-logo"><span class="pill-fallback">DC</span><img src="https://images.credly.com/images/9a698c36-3b13-48b4-a3bf-8a070d5000a6/twitter_thumb_201604_image.png" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()" /></span>
+          <span class="pill-copy"><small>DEF CON</small><strong>SOC GOON</strong></span>
+        </button>
+        <button class="credential-pill btv" data-open="credentials">
+          <span class="pill-logo"><span class="pill-fallback">BTV</span><img src="https://github.com/blueteamvillage.png?size=160" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()" /></span>
+          <span class="pill-copy"><small>BLUE TEAM VILLAGE</small><strong>DC33 + DC34 SPEAKER // CTF DC32–34</strong></span>
+        </button>
+        <button class="credential-pill hrv" data-open="credentials">
+          <span class="pill-logo"><span class="pill-fallback">HRV</span><img src="assets/hrv-logo.png" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()" /></span>
+          <span class="pill-copy"><small>HAM RADIO VILLAGE</small><strong>PINKY + THE BRAIN FOX // DC34</strong></span>
+        </button>
+      </div>
+    </section>
+
+    <nav class="desktop-icons" aria-label="Desktop applications">
+      <button class="desktop-icon" data-open="terminal"><span class="glyph">$_</span><span>Terminal</span></button>
+      <button class="desktop-icon" data-open="projects"><span class="glyph">{ }</span><span>Projects</span></button>
+      <button class="desktop-icon" data-open="credentials"><span class="glyph credential-glyph">DC</span><span>Badges</span></button>
+      <button class="desktop-icon" data-open="about"><span class="glyph">ID</span><span>About</span></button>
+      <button class="desktop-icon" data-open="resources"><span class="glyph">//</span><span>Resources</span></button>
+      <button class="desktop-icon" data-open="system"><span class="glyph">::</span><span>System</span></button>
+      <button class="desktop-icon" data-open="radio"><span class="glyph radio-glyph">♪</span><span>Signal FM</span></button>
+      <button class="desktop-icon" data-open="game"><span class="glyph game-glyph">TT</span><span>Tool Trail</span></button>
+      <a class="desktop-icon" href="https://github.com/K4INU" target="_blank" rel="noreferrer"><span class="glyph">GH</span><span>GitHub</span></a>
+    </nav>
+
+    <section class="window-layer" id="windowLayer" aria-live="polite"></section>
+
+    <section class="start-menu" id="startMenu" aria-hidden="true">
+      <div class="start-header">
+        <div class="start-avatar">K4</div>
+        <div><strong>KAINU</strong><small>SECURITY // DFIR</small></div>
+      </div>
+      <div class="start-grid">
+        <button data-open="terminal"><span>$_</span>Terminal</button>
+        <button data-open="projects"><span>{ }</span>Projects</button>
+        <button data-open="credentials"><span>DC</span>Badges</button>
+        <button data-open="about"><span>ID</span>About</button>
+        <button data-open="resources"><span>//</span>Resources</button>
+        <button data-open="system"><span>::</span>System</button>
+        <button data-open="radio"><span>♪</span>Signal FM</button>
+        <button data-open="game"><span>TT</span>Tool Trail</button>
+        <a href="https://github.com/K4INU" target="_blank" rel="noreferrer"><span>GH</span>GitHub</a>
+      </div>
+      <div class="start-footer">K4INU_OS v1.0 // STATIC BUILD</div>
+    </section>
+
+    <section class="signal-dock" id="signalDock" aria-label="Synthwave music player">
+      <button class="signal-main" data-open="radio" aria-label="Open Signal FM">
+        <span class="signal-led"></span>
+        <span><small>K4INU SIGNAL//FM</small><strong data-radio-track>NIGHT SHIFT</strong></span>
+      </button>
+      <div class="signal-bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+      <button class="signal-play" data-radio-play aria-label="Play music">▶</button>
+    </section>
+
+    <footer class="taskbar">
+      <button class="start-button" id="startButton" aria-expanded="false" aria-controls="startMenu"><span class="kmark">K4</span> START</button>
+      <div class="task-buttons" id="taskButtons" aria-label="Open windows"></div>
+      <div class="tray"><span class="tray-led" title="network"></span><span id="taskClock">--:--</span></div>
+    </footer>
+  </main>
+
+  <template id="windowTemplate">
+    <article class="app-window" role="dialog" aria-modal="false">
+      <header class="window-titlebar">
+        <div class="window-title"><span class="window-icon"></span><span class="window-name"></span></div>
+        <div class="window-controls">
+          <button data-action="minimize" aria-label="Minimize">_</button>
+          <button data-action="maximize" aria-label="Maximize">□</button>
+          <button data-action="close" aria-label="Close">×</button>
+        </div>
+      </header>
+      <div class="window-body"></div>
+      <footer class="window-status"></footer>
+    </article>
+  </template>
+
+  <script src="assets/app.js"></script>
+</body>
+</html>
