@@ -1,0 +1,16 @@
+{
+  "generated_at": null,
+  "sources": [
+    "CISA KEV",
+    "NVD",
+    "BleepingComputer",
+    "Dark Reading",
+    "The Hacker News"
+  ],
+  "known_exploited": [],
+  "critical": [],
+  "news": [],
+  "errors": [
+    "Initial placeholder. Run the Update threat feed GitHub Action once after deployment."
+  ]
+}

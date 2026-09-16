@@ -1,0 +1,5 @@
+Drop your profile picture in this folder as:
+
+  profile.jpg
+
+The About app loads /assets/profile.jpg. If it is missing, K4INU_OS falls back to the K4 text avatar.

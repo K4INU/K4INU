@@ -9,7 +9,10 @@
     resources: { title: 'RESOURCE INDEX // links', icon: '//', status: 'reference shortcuts', width: 690, height: 500, render: renderResources },
     system: { title: 'SYSTEM MONITOR // settings', icon: '::', status: 'K4INU_OS v1.0', width: 620, height: 470, render: renderSystem },
     radio: { title: 'K4INU SIGNAL//FM // 30-track cyber radio', icon: '♪', status: '30 original procedural tracks // heavy bass + glitch // Web Audio', width: 790, height: 650, render: renderRadio },
-    game: { title: 'TOOL TRAIL // operator game', icon: 'TT', status: '7-stage choose-the-right-tool run', width: 820, height: 620, render: renderToolTrail }
+    game: { title: 'TOOL TRAIL // operator game', icon: 'TT', status: '7-stage choose-the-right-tool run', width: 820, height: 620, render: renderToolTrail },
+    toolkit: { title: 'CTF WORKBENCH // decoder toolkit', icon: 'CTF', status: 'local transforms // nothing leaves your browser', width: 860, height: 650, render: renderToolkit },
+    feed: { title: 'THREAT FEED // vuln + hacker news', icon: 'RF', status: 'CISA KEV // critical CVEs // security news', width: 900, height: 650, render: renderThreatFeed },
+    pizzint: { title: 'PIZZINT WATCH // live mini-browser', icon: 'PZ', status: 'live third-party view // pizzint.watch', width: 920, height: 680, render: renderPizzint }
   };
 
   const PROJECTS = [
@@ -489,11 +492,14 @@
           print('whoami               operator profile');
           print('ls                   list workspace items');
           print('projects             list project repositories');
-          print('open <name>          open terminal/projects/badges/about/resources/system/radio/game');
+          print('open <name>          open apps: projects/badges/radio/game/toolkit/feed/pizzint');
           print('cat about            print profile summary');
           print('neofetch             system summary');
           print('radio                open synthwave player');
           print('game                 open tool-selection game');
+          print('toolkit              open CTF decoder workbench');
+          print('feed                 open threat + vulnerability feed');
+          print('pizzint              open Pizzint Watch mini-browser');
           print('play / pause          control Signal FM');
           print('github               open github.com/K4INU');
           print('date                  local browser date/time');
@@ -506,14 +512,14 @@
           print('Ham Radio Village · Pinky + the Brain Fox · DEF CON 34', 'amber');
           break;
         case 'ls':
-          print('about.txt   projects/   credentials/   resources/   radio/   game/   system/');
+          print('about.txt   projects/   credentials/   resources/   radio/   game/   toolkit/   feed/   pizzint/   system/');
           break;
         case 'projects':
           PROJECTS.forEach(p => print(`${p.name.padEnd(27)} ${p.type}`, 'dim'));
           print('Tip: open projects', 'amber');
           break;
         case 'open': {
-          const aliases = { project:'projects', projects:'projects', badge:'credentials', badges:'credentials', credentials:'credentials', defcon:'credentials', hrv:'credentials', ham:'credentials', about:'about', resources:'resources', resource:'resources', system:'system', terminal:'terminal', radio:'radio', music:'radio', signal:'radio', game:'game', trail:'game', tooltrail:'game', tools:'game' };
+          const aliases = { project:'projects', projects:'projects', badge:'credentials', badges:'credentials', credentials:'credentials', defcon:'credentials', hrv:'credentials', ham:'credentials', about:'about', resources:'resources', resource:'resources', system:'system', terminal:'terminal', radio:'radio', music:'radio', signal:'radio', game:'game', trail:'game', tooltrail:'game', tools:'game', toolkit:'toolkit', ctf:'toolkit', decode:'toolkit', decoder:'toolkit', feed:'feed', threats:'feed', news:'feed', pizzint:'pizzint', pizza:'pizzint' };
           if (aliases[arg]) openApp(aliases[arg]);
           else {
             const project = PROJECTS.find(p => p.id === arg || p.name.toLowerCase() === arg);
@@ -540,11 +546,16 @@
           print('Community:   DEF CON SOC GOON / DC33 + DC34 speaker / BTV CTF DC32–34');
           print('Radio:       Ham Radio Village / Pinky + the Brain Fox / DC34');
           print('Mini-game:   Tool Trail // 7-stage run');
+          print('Workbench:   CTF decoder // Base64 / ROT / Caesar / Pigpen / more');
+          print('Threats:     CISA KEV + critical CVEs + security news');
           print('Deployment:  GitHub Pages');
           print(`Viewport:    ${window.innerWidth}x${window.innerHeight}`);
           break;
         case 'radio': case 'music': openApp('radio'); break;
         case 'game': case 'trail': case 'tools': openApp('game'); break;
+        case 'toolkit': case 'ctf': case 'decode': openApp('toolkit'); break;
+        case 'feed': case 'threats': case 'news': openApp('feed'); break;
+        case 'pizzint': case 'pizza': openApp('pizzint'); break;
         case 'play': playRadio(); print('Signal FM: transmitting.', 'dim'); break;
         case 'pause': pauseRadio(); print('Signal FM: standby.', 'dim'); break;
         case 'github':
@@ -678,7 +689,7 @@
           </div>
         </div>
       </section>
-      <p class="mark-note">DEF CON, Blue Team Village, and Ham Radio Village marks are shown only to describe community participation and speaking history; they remain the property of their respective organizations. The Project Obsidian emblem is a K4INU_OS site treatment.</p>`;
+      <p class="mark-note">DEF CON, Blue Team Village, Ham Radio Village, and Project Obsidian marks are shown only to describe community participation and speaking history; they remain the property of their respective organizations.</p>`;
     return root;
   }
 
@@ -688,7 +699,7 @@
       <div class="panel-eyebrow">OPERATOR RECORD // PUBLIC</div>
       <div class="about-grid">
         <aside class="id-card">
-          <div class="id-avatar">K4</div>
+          <div class="id-avatar"><img src="/assets/profile.jpg?v=11f1" alt="Kainu profile" onerror="this.hidden=true;this.nextElementSibling.hidden=false" /><span hidden>K4</span></div>
           <dl><dt>HANDLE</dt><dd>Kainu</dd><dt>ROLE</dt><dd>Security Professional</dd><dt>FOCUS</dt><dd>DFIR / IR</dd><dt>STATUS</dt><dd>Building useful things</dd></dl>
         </aside>
         <div>
@@ -721,7 +732,166 @@
         <div class="resource-row"><span class="tag">OBSIDIAN</span><span>Project Obsidian</span><a href="https://www.blueteamvillage.org/programs/project-obsidian" target="_blank" rel="noreferrer">OPEN ↗</a></div>
         <div class="resource-row"><span class="tag">HRV</span><span>Pinky + the Brain Fox · DEF CON 34</span><a href="https://github.com/HamRadioVillage/fox-hunt-writeups/tree/main/dc34" target="_blank" rel="noreferrer">WRITEUPS ↗</a></div>
         <div class="resource-row"><span class="tag">TALK</span><span>Threat Hunting 101: Beyond the Alerts</span><a href="https://defcon.outel.org/defcon33/dc33_schedule.pdf" target="_blank" rel="noreferrer">SCHEDULE ↗</a></div>
+        <div class="resource-row"><span class="tag">CTF</span><span>Local CTF decoder workbench</span><button class="mini-btn" data-open="toolkit">OPEN</button></div>
+        <div class="resource-row"><span class="tag">FEED</span><span>Threat + vulnerability feed</span><button class="mini-btn" data-open="feed">OPEN</button></div>
+        <div class="resource-row"><span class="tag">OSINT</span><span>Pizzint Watch</span><button class="mini-btn" data-open="pizzint">OPEN</button></div>
       </div>`;
+    return root;
+  }
+
+
+  function bytesToBase64(bytes) {
+    let binary = '';
+    bytes.forEach(b => binary += String.fromCharCode(b));
+    return btoa(binary);
+  }
+
+  function base64ToBytes(value) {
+    const clean = value.replace(/\s+/g, '');
+    const binary = atob(clean);
+    return Uint8Array.from(binary, ch => ch.charCodeAt(0));
+  }
+
+  function caesarText(value, shift) {
+    const s = ((Number(shift) % 26) + 26) % 26;
+    return value.replace(/[A-Za-z]/g, ch => {
+      const base = ch <= 'Z' ? 65 : 97;
+      return String.fromCharCode((ch.charCodeAt(0) - base + s) % 26 + base);
+    });
+  }
+
+  function atbashText(value) {
+    return value.replace(/[A-Za-z]/g, ch => {
+      const base = ch <= 'Z' ? 65 : 97;
+      return String.fromCharCode(base + (25 - (ch.charCodeAt(0) - base)));
+    });
+  }
+
+  const MORSE = {
+    A:'.-',B:'-...',C:'-.-.',D:'-..',E:'.',F:'..-.',G:'--.',H:'....',I:'..',J:'.---',K:'-.-',L:'.-..',M:'--',N:'-.',O:'---',P:'.--.',Q:'--.-',R:'.-.',S:'...',T:'-',U:'..-',V:'...-',W:'.--',X:'-..-',Y:'-.--',Z:'--..',
+    0:'-----',1:'.----',2:'..---',3:'...--',4:'....-',5:'.....',6:'-....',7:'--...',8:'---..',9:'----.', '.':'.-.-.-',',':'--..--','?':'..--..','/':'-..-.','-':'-....-'
+  };
+  const MORSE_REV = Object.fromEntries(Object.entries(MORSE).map(([k,v]) => [v,k]));
+
+  const PIGPEN_SYMBOLS = ['⌜','⊤','⌝','├','□','┤','⌞','⊥','⌟','•⌜','•⊤','•⌝','•├','•□','•┤','•⌞','•⊥','•⌟','△','▷','▽','◁','•△','•▷','•▽','•◁'];
+  const PIGPEN = Object.fromEntries('ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map((ch,i) => [ch,PIGPEN_SYMBOLS[i]]));
+  const PIGPEN_REV = Object.fromEntries(Object.entries(PIGPEN).map(([k,v]) => [v,k]));
+
+  const BASE32_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+  function base32Encode(value) {
+    const bytes = new TextEncoder().encode(value);
+    let bits = '', out = '';
+    bytes.forEach(b => bits += b.toString(2).padStart(8,'0'));
+    for (let i=0; i<bits.length; i+=5) out += BASE32_ALPHABET[parseInt(bits.slice(i,i+5).padEnd(5,'0'),2)];
+    while (out.length % 8) out += '=';
+    return out;
+  }
+  function base32Decode(value) {
+    let bits = '';
+    for (const ch of value.toUpperCase().replace(/=|\s/g,'')) {
+      const idx = BASE32_ALPHABET.indexOf(ch);
+      if (idx < 0) throw new Error(`Invalid Base32 character: ${ch}`);
+      bits += idx.toString(2).padStart(5,'0');
+    }
+    const bytes = [];
+    for (let i=0; i+8<=bits.length; i+=8) bytes.push(parseInt(bits.slice(i,i+8),2));
+    return new TextDecoder().decode(new Uint8Array(bytes));
+  }
+
+  function runTransform(kind, direction, input, shift) {
+    const enc = direction === 'encode';
+    switch (kind) {
+      case 'base64': return enc ? bytesToBase64(new TextEncoder().encode(input)) : new TextDecoder().decode(base64ToBytes(input));
+      case 'base32': return enc ? base32Encode(input) : base32Decode(input);
+      case 'rot13': return caesarText(input, 13);
+      case 'caesar': return caesarText(input, enc ? Number(shift || 3) : -Number(shift || 3));
+      case 'atbash': return atbashText(input);
+      case 'hex': return enc ? Array.from(new TextEncoder().encode(input), b => b.toString(16).padStart(2,'0')).join(' ') : new TextDecoder().decode(new Uint8Array((input.match(/[0-9a-fA-F]{2}/g) || []).map(x => parseInt(x,16))));
+      case 'binary': return enc ? Array.from(new TextEncoder().encode(input), b => b.toString(2).padStart(8,'0')).join(' ') : new TextDecoder().decode(new Uint8Array(input.trim().split(/\s+/).filter(Boolean).map(x => parseInt(x,2))));
+      case 'url': return enc ? encodeURIComponent(input) : decodeURIComponent(input.replace(/\+/g,' '));
+      case 'html': {
+        if (enc) return input.replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+        const ta=document.createElement('textarea'); ta.innerHTML=input; return ta.value;
+      }
+      case 'reverse': return Array.from(input).reverse().join('');
+      case 'morse': return enc ? input.toUpperCase().split('').map(ch => ch === ' ' ? '/' : (MORSE[ch] || ch)).join(' ') : input.trim().split(/\s+/).map(token => token === '/' ? ' ' : (MORSE_REV[token] || token)).join('');
+      case 'pigpen': {
+        if (enc) return input.toUpperCase().split('').map(ch => ch === ' ' ? ' / ' : (PIGPEN[ch] || ch)).join(' ');
+        const tokens = input.trim().split(/\s+/); return tokens.map(token => token === '/' ? ' ' : (PIGPEN_REV[token] || token)).join('').replace(/\s+/g,' ');
+      }
+      default: return input;
+    }
+  }
+
+  function renderToolkit() {
+    const root = document.createElement('div'); root.className='panel-content toolkit-panel';
+    root.innerHTML = `
+      <div class="panel-eyebrow">CTF // LOCAL DECODER WORKBENCH</div>
+      <div class="toolkit-head"><div><h2>CTF Workbench</h2><p>Fast text transforms for CTFs and puzzles. Everything runs locally in your browser; input is not sent anywhere.</p></div><span class="local-badge">LOCAL ONLY</span></div>
+      <div class="toolkit-controls">
+        <label>RECIPE<select data-toolkit-kind><option value="base64">Base64</option><option value="base32">Base32</option><option value="rot13">ROT13</option><option value="caesar">Caesar</option><option value="atbash">Atbash</option><option value="hex">Hex</option><option value="binary">Binary</option><option value="url">URL</option><option value="html">HTML Entities</option><option value="morse">Morse</option><option value="pigpen">Pigpen</option><option value="reverse">Reverse</option></select></label>
+        <label class="shift-control">SHIFT<input data-toolkit-shift type="number" min="0" max="25" value="3" /></label>
+        <div class="toolkit-dir"><button class="mini-btn active" data-toolkit-dir="decode">DECODE</button><button class="mini-btn" data-toolkit-dir="encode">ENCODE</button></div>
+      </div>
+      <div class="toolkit-grid">
+        <label>INPUT<textarea data-toolkit-input spellcheck="false" placeholder="Paste CTF text here..."></textarea></label>
+        <label>OUTPUT<textarea data-toolkit-output spellcheck="false" readonly placeholder="Result appears here..."></textarea></label>
+      </div>
+      <div class="toolkit-actions"><button class="ui-button primary" data-toolkit-run>RUN TRANSFORM</button><button class="ui-button" data-toolkit-swap>SWAP</button><button class="ui-button" data-toolkit-copy>COPY OUTPUT</button><button class="ui-button" data-toolkit-clear>CLEAR</button></div>
+      <p class="toolkit-note">Pigpen has no universal plain-text character set. This workbench uses a documented Unicode site notation: grid symbols, with <strong>•</strong> marking the dotted set.</p>`;
+    const input=root.querySelector('[data-toolkit-input]'), output=root.querySelector('[data-toolkit-output]'), kind=root.querySelector('[data-toolkit-kind]'), shift=root.querySelector('[data-toolkit-shift]');
+    let direction='decode';
+    const run=()=>{ try { output.value=runTransform(kind.value,direction,input.value,shift.value); } catch(err) { output.value=`ERROR: ${err.message}`; } };
+    root.addEventListener('click', async e => {
+      const dir=e.target.closest('[data-toolkit-dir]'); if(dir){ direction=dir.dataset.toolkitDir; root.querySelectorAll('[data-toolkit-dir]').forEach(b=>b.classList.toggle('active',b===dir)); return; }
+      if(e.target.closest('[data-toolkit-run]')) { run(); return; }
+      if(e.target.closest('[data-toolkit-swap]')) { const tmp=input.value; input.value=output.value; output.value=tmp; return; }
+      if(e.target.closest('[data-toolkit-clear]')) { input.value=''; output.value=''; return; }
+      if(e.target.closest('[data-toolkit-copy]')) { try { await navigator.clipboard.writeText(output.value); toast('CTF output copied.'); } catch { toast('Copy unavailable in this browser.'); } }
+    });
+    kind.addEventListener('change',()=>root.querySelector('.shift-control').classList.toggle('visible',kind.value==='caesar'));
+    input.addEventListener('keydown',e=>{ if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();run();} });
+    return root;
+  }
+
+  function safeExternalUrl(value) {
+    try { const u=new URL(value); return ['http:','https:'].includes(u.protocol) ? u.href : '#'; } catch { return '#'; }
+  }
+
+  function renderThreatFeed() {
+    const root=document.createElement('div'); root.className='panel-content feed-panel';
+    root.innerHTML=`<div class="panel-eyebrow">LIVE INDEX // SECURITY ONLY</div><div class="feed-head"><div><h2>Threat Feed</h2><p>Known exploited vulnerabilities, critical CVEs, and security reporting. Promotional entries are filtered by the updater.</p></div><button class="mini-btn" data-feed-refresh>REFRESH</button></div><div class="feed-meta" data-feed-meta>Loading local feed cache…</div><div class="feed-tabs"><button class="mini-btn active" data-feed-tab="all">ALL</button><button class="mini-btn" data-feed-tab="kev">KNOWN EXPLOITED</button><button class="mini-btn" data-feed-tab="critical">CRITICAL CVEs</button><button class="mini-btn" data-feed-tab="news">NEWS</button></div><div class="feed-list" data-feed-list><div class="feed-loading">Connecting to /assets/threat-feed.json…</div></div>`;
+    let data=null, tab='all';
+    const list=root.querySelector('[data-feed-list]'), meta=root.querySelector('[data-feed-meta]');
+    const dateText=value=>{ if(!value) return ''; const d=new Date(value); return Number.isNaN(d.valueOf()) ? value : d.toLocaleString([], {dateStyle:'medium', timeStyle:'short'}); };
+    const draw=()=>{
+      if(!data) return;
+      if(!data.generated_at && !(data.news||[]).length && !(data.known_exploited||[]).length && !(data.critical||[]).length) {
+        meta.textContent='FEED CACHE WAITING FOR FIRST UPDATE';
+        list.innerHTML='<div class="feed-error"><strong>Threat feed is installed but not populated yet.</strong><p>After uploading this build, open GitHub → Actions → <code>Update threat feed</code> → Run workflow once. After that it refreshes automatically every hour.</p></div>';
+        return;
+      }
+      let items=[];
+      if(tab==='all'||tab==='kev') items.push(...(data.known_exploited||[]).map(x=>({...x,kind:'KEV'})));
+      if(tab==='all'||tab==='critical') items.push(...(data.critical||[]).map(x=>({...x,kind:'CRITICAL'})));
+      if(tab==='all'||tab==='news') items.push(...(data.news||[]).map(x=>({...x,kind:'NEWS'})));
+      items.sort((a,b)=>String(b.published||b.date_added||'').localeCompare(String(a.published||a.date_added||'')));
+      if(tab==='all') items=items.slice(0,32);
+      list.innerHTML=items.length?items.map(item=>`<article class="feed-item ${item.kind.toLowerCase()}"><div class="feed-item-meta"><span>${esc(item.kind)}</span><span>${esc(item.source||'')}</span><time>${esc(dateText(item.published||item.date_added))}</time></div><h3><a href="${esc(safeExternalUrl(item.url||item.link||''))}" target="_blank" rel="noreferrer">${esc(item.title||item.cve||'Untitled')}</a></h3>${item.summary?`<p>${esc(item.summary)}</p>`:''}${item.cve&&item.title!==item.cve?`<code>${esc(item.cve)}</code>`:''}</article>`).join(''):'<div class="feed-loading">No entries in this section yet.</div>';
+      meta.textContent=`UPDATED ${dateText(data.generated_at)||'unknown'} // ${(data.news||[]).length} NEWS // ${(data.known_exploited||[]).length} KEV // ${(data.critical||[]).length} CRITICAL`;
+    };
+    const load=async()=>{
+      meta.textContent='Refreshing local feed cache…';
+      try { const res=await fetch(`/assets/threat-feed.json?v=${Date.now()}`,{cache:'no-store'}); if(!res.ok) throw new Error(`HTTP ${res.status}`); data=await res.json(); draw(); }
+      catch(err){ list.innerHTML=`<div class="feed-error"><strong>Feed cache unavailable.</strong><p>The GitHub Action may not have run yet. Run <code>Update threat feed</code> once from the Actions tab.</p><p>${esc(err.message)}</p><div class="feed-source-links"><a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog" target="_blank" rel="noreferrer">CISA KEV ↗</a><a href="https://www.bleepingcomputer.com/" target="_blank" rel="noreferrer">BleepingComputer ↗</a><a href="https://www.darkreading.com/" target="_blank" rel="noreferrer">Dark Reading ↗</a><a href="https://thehackernews.com/" target="_blank" rel="noreferrer">The Hacker News ↗</a></div></div>`; meta.textContent='LOCAL FEED CACHE NOT READY'; }
+    };
+    root.addEventListener('click',e=>{ const b=e.target.closest('[data-feed-tab]'); if(b){tab=b.dataset.feedTab;root.querySelectorAll('[data-feed-tab]').forEach(x=>x.classList.toggle('active',x===b));draw();return;} if(e.target.closest('[data-feed-refresh]')) load(); });
+    load(); return root;
+  }
+
+  function renderPizzint() {
+    const root=document.createElement('div'); root.className='pizzint-panel';
+    root.innerHTML=`<div class="mini-browser-bar"><span class="mini-browser-dot"></span><strong>https://www.pizzint.watch/</strong><a href="https://www.pizzint.watch/" target="_blank" rel="noreferrer">OPEN FULL SITE ↗</a></div><iframe class="pizzint-frame" src="https://www.pizzint.watch/" title="Pizzint Watch" loading="lazy" referrerpolicy="no-referrer" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"></iframe><div class="embed-note">Live third-party view. If Pizzint Watch blocks iframe embedding in your browser, use <a href="https://www.pizzint.watch/" target="_blank" rel="noreferrer">OPEN FULL SITE ↗</a>.</div>`;
     return root;
   }
 
@@ -956,6 +1126,9 @@
       '[  OK  ] Indexing Ham Radio Village // Pinky + the Brain Fox // DC34',
       '[  OK  ] Starting K4INU SIGNAL//FM audio service',
       '[  OK  ] Loading Tool Trail operator mini-game',
+      '[  OK  ] Mounting CTF Workbench transforms',
+      '[  OK  ] Loading local threat-feed cache',
+      '[  OK  ] Registering Pizzint Watch mini-browser',
       '',
       'K4INU_OS ready.'
     ];
