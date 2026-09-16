@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320" role="img" aria-labelledby="title desc">
+  <title id="title">Project Obsidian</title>
+  <desc id="desc">A custom K4INU_OS faceted obsidian emblem for the Project Obsidian credential.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#07110f"/><stop offset="1" stop-color="#0b0714"/></linearGradient>
+    <linearGradient id="crystal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#151126"/><stop offset=".46" stop-color="#6c55bd"/><stop offset="1" stop-color="#181125"/></linearGradient>
+    <linearGradient id="edge" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#6ccdb8"/><stop offset=".55" stop-color="#8c74ef"/><stop offset="1" stop-color="#e0004e"/></linearGradient>
+  </defs>
+  <rect x="3" y="3" width="314" height="314" rx="10" fill="url(#bg)" stroke="#342952" stroke-width="6"/>
+  <path d="M160 38 236 101 215 216 160 280 105 216 84 101Z" fill="url(#crystal)" stroke="url(#edge)" stroke-width="5"/>
+  <path d="M160 38 160 280 105 216 84 101Z" fill="#090b12" opacity=".62"/>
+  <path d="M160 38 236 101 160 139 84 101Z" fill="#9a86ef" opacity=".22"/>
+  <path d="M84 101 160 139 105 216Z" fill="#017fa4" opacity=".18"/>
+  <path d="M236 101 160 139 215 216Z" fill="#e0004e" opacity=".14"/>
+  <path d="M105 216 160 139 215 216 160 280Z" fill="#151024" opacity=".78"/>
+  <text x="160" y="151" text-anchor="middle" fill="#f0ecff" font-family="ui-monospace, monospace" font-size="20" font-weight="800" letter-spacing="2">PROJECT</text>
+  <text x="160" y="177" text-anchor="middle" fill="#b9abff" font-family="ui-monospace, monospace" font-size="20" font-weight="900" letter-spacing="1">OBSIDIAN</text>
+  <text x="160" y="300" text-anchor="middle" fill="#668d80" font-family="ui-monospace, monospace" font-size="10" letter-spacing="2">BLUE TEAM VILLAGE CTF</text>
+</svg>
