@@ -11,7 +11,7 @@
     radio: { title: 'K4INU SIGNAL//FM // 30-track cyber radio', icon: '♪', status: '30 original procedural tracks // heavy bass + glitch // Web Audio', width: 790, height: 650, render: renderRadio },
     game: { title: 'TOOL TRAIL // operator game', icon: 'TT', status: '7-stage choose-the-right-tool run', width: 820, height: 620, render: renderToolTrail },
     toolkit: { title: 'CTF WORKBENCH // decoder toolkit', icon: 'CTF', status: 'local transforms // nothing leaves your browser', width: 860, height: 650, render: renderToolkit },
-    feed: { title: 'THREAT FEED // vuln + hacker news', icon: 'RF', status: 'CISA KEV // critical CVEs // security news', width: 900, height: 650, render: renderThreatFeed },
+    feed: { title: 'THREAT FEED // vuln + hacker news', icon: 'RF', status: 'LIVE // CISA KEV // critical advisories // security news // v15', width: 900, height: 650, render: renderThreatFeed },
     pizzint: { title: 'PIZZINT WATCH // live mini-browser', icon: 'PZ', status: 'live third-party view // pizzint.watch', width: 920, height: 680, render: renderPizzint }
   };
 
@@ -889,7 +889,7 @@
   // CISA maintains this GitHub mirror specifically to make KEV data easier to consume.
   const CISA_KEV_URL = 'https://raw.githubusercontent.com/cisagov/kev-data/develop/known_exploited_vulnerabilities.json';
   const GITHUB_CRITICAL_URL = 'https://api.github.com/advisories?severity=critical&per_page=20';
-  const THREAT_CACHE_KEY = 'k4-threat-feed-v14';
+  const THREAT_CACHE_KEY = 'k4-threat-feed-v15';
   const PROMO_RE = /\b(sponsored|advertorial|webinar|white\s*paper|ebook|e-book|free\s+guide|download\s+now|register\s+now|save\s+your\s+spot|resource\s+library|buyer(?:'s)?\s+guide|free\s+report|special\s+offer|limited\s+offer|partner\s+content)\b/i;
 
   function cleanFeedText(value, limit=360) {
@@ -964,7 +964,7 @@
 
   function renderThreatFeed() {
     const root=document.createElement('div'); root.className='panel-content feed-panel';
-    root.innerHTML=`<div class="panel-eyebrow">LIVE SECURITY FEEDS // NO SCHEDULED BACKEND</div><div class="feed-head"><div><h2>Threat Feed</h2><p>Live CISA KEV, critical GitHub security advisories, and security-news RSS. The browser refreshes every source when this window opens.</p></div><button class="mini-btn" data-feed-refresh>REFRESH LIVE</button></div><div class="feed-meta" data-feed-meta>Connecting to live sources…</div><div class="feed-source-status" data-feed-status></div><div class="feed-tabs"><button class="mini-btn active" data-feed-tab="all">ALL</button><button class="mini-btn" data-feed-tab="kev">KNOWN EXPLOITED</button><button class="mini-btn" data-feed-tab="critical">CRITICAL</button><button class="mini-btn" data-feed-tab="news">NEWS</button></div><div class="feed-list" data-feed-list><div class="feed-loading">Fetching live threat intelligence…</div></div>`;
+    root.innerHTML=`<div class="panel-eyebrow">LIVE SECURITY FEEDS // BUILD V15 // NO SCHEDULED BACKEND</div><div class="feed-head"><div><h2>Threat Feed</h2><p>Live CISA KEV, critical GitHub security advisories, and security-news RSS. The browser refreshes every source when this window opens.</p></div><button class="mini-btn" data-feed-refresh>REFRESH LIVE</button></div><div class="feed-meta" data-feed-meta>Connecting to live sources…</div><div class="feed-source-status" data-feed-status></div><div class="feed-tabs"><button class="mini-btn active" data-feed-tab="all">ALL</button><button class="mini-btn" data-feed-tab="kev">KNOWN EXPLOITED</button><button class="mini-btn" data-feed-tab="critical">CRITICAL</button><button class="mini-btn" data-feed-tab="news">NEWS</button></div><div class="feed-list" data-feed-list><div class="feed-loading">Fetching live threat intelligence…</div></div>`;
     let data={known_exploited:[],critical:[],news:[],errors:[],generated_at:'',source_status:{}}, tab='all', loading=false;
     const list=root.querySelector('[data-feed-list]'), meta=root.querySelector('[data-feed-meta]'), status=root.querySelector('[data-feed-status]');
     const dateText=value=>{ if(!value) return ''; const d=new Date(value); return Number.isNaN(d.valueOf()) ? value : d.toLocaleString([], {dateStyle:'medium', timeStyle:'short'}); };
