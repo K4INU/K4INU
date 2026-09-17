@@ -12,7 +12,7 @@
     game: { title: 'TOOL TRAIL // operator game', icon: 'TT', status: '7-stage choose-the-right-tool run', width: 820, height: 620, render: renderToolTrail },
     toolkit: { title: 'CTF WORKBENCH // decoder toolkit', icon: 'CTF', status: 'local transforms // nothing leaves your browser', width: 860, height: 650, render: renderToolkit },
     feed: { title: 'THREAT FEED // vuln + hacker news', icon: 'RF', status: 'LIVE // CISA KEV // critical advisories // security news // v15', width: 900, height: 650, render: renderThreatFeed },
-    pizzint: { title: 'PIZZINT WATCH // live mini-browser', icon: 'PZ', status: 'live third-party view // pizzint.watch', width: 920, height: 680, render: renderPizzint }
+    pizzint: { title: 'PIZZINT WATCH // live launcher', icon: 'PZ', status: 'opens pizzint.watch in a live popup', width: 590, height: 400, render: renderPizzint }
   };
 
   const PROJECTS = [
@@ -520,7 +520,8 @@
           break;
         case 'open': {
           const aliases = { project:'projects', projects:'projects', badge:'credentials', badges:'credentials', credentials:'credentials', defcon:'credentials', hrv:'credentials', ham:'credentials', about:'about', resources:'resources', resource:'resources', system:'system', terminal:'terminal', radio:'radio', music:'radio', signal:'radio', game:'game', trail:'game', tooltrail:'game', tools:'game', toolkit:'toolkit', ctf:'toolkit', decode:'toolkit', decoder:'toolkit', feed:'feed', threats:'feed', news:'feed', pizzint:'pizzint', pizza:'pizzint' };
-          if (aliases[arg]) openApp(aliases[arg]);
+          if (aliases[arg] === 'pizzint') launchPizzintPopup();
+          else if (aliases[arg]) openApp(aliases[arg]);
           else {
             const project = PROJECTS.find(p => p.id === arg || p.name.toLowerCase() === arg);
             if (project) window.open(project.url, '_blank', 'noopener,noreferrer');
@@ -555,7 +556,7 @@
         case 'game': case 'trail': case 'tools': openApp('game'); break;
         case 'toolkit': case 'ctf': case 'decode': openApp('toolkit'); break;
         case 'feed': case 'threats': case 'news': openApp('feed'); break;
-        case 'pizzint': case 'pizza': openApp('pizzint'); break;
+        case 'pizzint': case 'pizza': launchPizzintPopup(); break;
         case 'play': playRadio(); print('Signal FM: transmitting.', 'dim'); break;
         case 'pause': pauseRadio(); print('Signal FM: standby.', 'dim'); break;
         case 'github':
@@ -757,7 +758,7 @@
         <div class="resource-row"><span class="tag">TALK</span><span>Threat Hunting 101: Beyond the Alerts</span><a href="https://defcon.outel.org/defcon33/dc33_schedule.pdf" target="_blank" rel="noreferrer">SCHEDULE ↗</a></div>
         <div class="resource-row"><span class="tag">CTF</span><span>Local CTF decoder workbench</span><button class="mini-btn" data-open="toolkit">OPEN</button></div>
         <div class="resource-row"><span class="tag">FEED</span><span>Threat + vulnerability feed</span><button class="mini-btn" data-open="feed">OPEN</button></div>
-        <div class="resource-row"><span class="tag">OSINT</span><span>Pizzint Watch</span><button class="mini-btn" data-open="pizzint">OPEN</button></div>
+        <div class="resource-row"><span class="tag">OSINT</span><span>PizzINT Watch</span><a class="mini-btn" href="https://www.pizzint.watch/" target="k4inu_pizzint_live" data-pizzint-link>OPEN LIVE ↗</a></div>
       </div>`;
     return root;
   }
@@ -1051,9 +1052,69 @@
     load(); return root;
   }
 
+  function launchPizzintPopup(fallbackAnchor) {
+    const url = 'https://www.pizzint.watch/';
+    const width = Math.min(980, Math.max(720, Math.round((window.screen.availWidth || window.innerWidth) * .72)));
+    const height = Math.min(780, Math.max(560, Math.round((window.screen.availHeight || window.innerHeight) * .78)));
+    const left = Math.max(0, Math.round(((window.screen.availWidth || window.innerWidth) - width) / 2));
+    const top = Math.max(0, Math.round(((window.screen.availHeight || window.innerHeight) - height) / 2));
+    const features = `popup=yes,width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`;
+
+    let popup = null;
+    try {
+      // Opening a same-origin blank window first is more reliable than opening a cross-origin URL with noopener flags.
+      popup = window.open('about:blank', 'k4inu_pizzint_live', features);
+    } catch {}
+
+    if (popup) {
+      try { popup.opener = null; } catch {}
+      try {
+        popup.location.replace(url);
+        popup.focus();
+        toast('PizzINT live window launched.');
+        return true;
+      } catch {}
+    }
+
+    // Let a real anchor continue normally when popup creation is blocked.
+    if (fallbackAnchor && fallbackAnchor.href) {
+      toast('Popup sizing blocked — opening PizzINT in a normal tab.');
+      return false;
+    }
+
+    // Terminal / non-anchor fallback.
+    try {
+      const tab = window.open(url, '_blank');
+      if (tab) {
+        try { tab.opener = null; } catch {}
+        toast('PizzINT opened in a new tab.');
+        return true;
+      }
+    } catch {}
+    toast('Your browser blocked the PizzINT window. Allow popups for kainu.codes, then try again.');
+    return false;
+  }
+
   function renderPizzint() {
-    const root=document.createElement('div'); root.className='pizzint-panel';
-    root.innerHTML=`<div class="mini-browser-bar"><span class="mini-browser-dot"></span><strong>https://www.pizzint.watch/</strong><a href="https://www.pizzint.watch/" target="_blank" rel="noreferrer">OPEN FULL SITE ↗</a></div><iframe class="pizzint-frame" src="https://www.pizzint.watch/" title="Pizzint Watch" loading="lazy" referrerpolicy="no-referrer" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"></iframe><div class="embed-note">Live third-party view. If Pizzint Watch blocks iframe embedding in your browser, use <a href="https://www.pizzint.watch/" target="_blank" rel="noreferrer">OPEN FULL SITE ↗</a>.</div>`;
+    const root=document.createElement('div'); root.className='panel-content pizzint-launcher';
+    root.innerHTML=`
+      <div class="panel-eyebrow">OSINT LAUNCHER // LIVE THIRD-PARTY SITE</div>
+      <h2>PizzINT Watch</h2>
+      <p>PizzINT does not reliably permit its site to run inside another site's iframe. K4INU_OS therefore launches the real site directly in a compact browser window so the dashboard stays live.</p>
+      <div class="pizzint-launch-card">
+        <div class="pizzint-launch-mark">PZ</div>
+        <div><small>LIVE DESTINATION</small><strong>pizzint.watch</strong><span>Direct browser session // no iframe</span></div>
+      </div>
+      <div class="pizzint-launch-actions">
+        <a class="ui-button primary" href="https://www.pizzint.watch/" target="k4inu_pizzint_live" data-pizzint-link>LAUNCH LIVE WINDOW ↗</a>
+        <a class="ui-button" href="https://www.pizzint.watch/" target="_blank" rel="noreferrer">OPEN NEW TAB</a>
+      </div>
+      <p class="embed-note">Desktop browsers usually open a roughly 960×720 resizable window. Mobile browsers may use a normal tab instead.</p>`;
+    root.addEventListener('click', e => {
+      const link = e.target.closest('[data-pizzint-link]');
+      if (!link) return;
+      if (launchPizzintPopup(link)) e.preventDefault();
+    });
     return root;
   }
 
@@ -1243,6 +1304,7 @@
   function closeStart() { startMenu.classList.remove('open'); startMenu.setAttribute('aria-hidden','true'); startButton.setAttribute('aria-expanded','false'); startButton.classList.remove('open'); }
 
   document.addEventListener('click', e => {
+    const pz = e.target.closest('[data-pizzint-link]'); if (pz) { if (launchPizzintPopup(pz)) e.preventDefault(); return; }
     const play = e.target.closest('[data-radio-play]'); if (play) { e.preventDefault(); toggleRadio(); return; }
     const prev = e.target.closest('[data-radio-prev]'); if (prev) { e.preventDefault(); setRadioTrack(radioState.trackIndex - 1); return; }
     const next = e.target.closest('[data-radio-next]'); if (next) { e.preventDefault(); setRadioTrack(radioState.trackIndex + 1); return; }
@@ -1290,7 +1352,7 @@
       '[  OK  ] Loading Tool Trail operator mini-game',
       '[  OK  ] Mounting CTF Workbench transforms',
       '[  OK  ] Connecting live RSS threat feed',
-      '[  OK  ] Registering Pizzint Watch mini-browser',
+      '[  OK  ] Registering PizzINT live popup launcher',
       '',
       'K4INU_OS ready.'
     ];
