@@ -509,3 +509,17 @@ a { color: inherit; }
 .pizzint-frame { flex:1; width:100%; min-height:0; border:0; background:#fff; }
 .embed-note { flex:0 0 auto; padding:7px 10px; border-top:1px solid #213744; background:#071018; color:#617987; font-size:9px; }
 @media (max-width:850px) { .toolkit-head,.feed-head { flex-direction:column; } .toolkit-grid { grid-template-columns:1fr; } .toolkit-grid textarea { min-height:180px; } }
+
+
+/* v14 live threat-feed source diagnostics */
+.feed-source-status { display:flex; flex-wrap:wrap; gap:6px; margin:0 0 10px; }
+.feed-status-chip { display:inline-flex; align-items:center; gap:5px; border:1px solid #2b4352; background:#071019; color:#7992a1; padding:5px 7px; font-size:8px; letter-spacing:.06em; }
+.feed-status-chip i { width:6px; height:6px; border-radius:50%; background:#566672; }
+.feed-status-chip b { font-weight:800; color:#a9bdc8; }
+.feed-status-chip.loading i { background:#ffc86b; box-shadow:0 0 8px rgba(255,200,107,.4); animation:feed-pulse .8s ease-in-out infinite alternate; }
+.feed-status-chip.ok { border-color:rgba(45,142,91,.5); color:#95c7aa; }
+.feed-status-chip.ok i { background:#32d887; box-shadow:0 0 8px rgba(50,216,135,.45); }
+.feed-status-chip.error { border-color:rgba(206,54,76,.48); color:#d9939e; }
+.feed-status-chip.error i { background:#ff3048; box-shadow:0 0 8px rgba(255,48,72,.45); }
+.feed-source-errors { border:1px solid rgba(255,48,72,.34); background:rgba(78,8,18,.22); color:#d99aa4; padding:8px 10px; font-size:9px; }
+@keyframes feed-pulse { from { opacity:.35; } to { opacity:1; } }

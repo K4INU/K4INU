@@ -699,7 +699,7 @@
       <div class="panel-eyebrow">OPERATOR RECORD // PUBLIC</div>
       <div class="about-grid">
         <aside class="id-card">
-          <div class="id-avatar"><img src="/assets/profile.jpg?v=11f1" alt="Kainu profile" onerror="this.hidden=true;this.nextElementSibling.hidden=false" /><span hidden>K4</span></div>
+          <div class="id-avatar"><img data-profile-image src="/assets/profile.jpg?v=13" alt="Kainu profile" /><span hidden>K4</span></div>
           <dl><dt>HANDLE</dt><dd>Kainu</dd><dt>ROLE</dt><dd>Security Professional</dd><dt>FOCUS</dt><dd>DFIR / IR</dd><dt>STATUS</dt><dd>Building useful things</dd></dl>
         </aside>
         <div>
@@ -714,6 +714,29 @@
           <p><a class="text-link" href="https://github.com/K4INU" target="_blank" rel="noreferrer">GITHUB PROFILE ↗</a></p>
         </div>
       </div>`;
+
+    const profileImg = root.querySelector('[data-profile-image]');
+    if (profileImg) {
+      const candidates = [
+        '/assets/profile.jpg?v=13',
+        '/assets/profile.jpeg?v=13',
+        '/assets/profile.png?v=13',
+        '/assets/profile.webp?v=13',
+        '/assets/Profile.jpg?v=13',
+        '/assets/Profile.png?v=13'
+      ];
+      let candidateIndex = 0;
+      const fallback = profileImg.nextElementSibling;
+      profileImg.addEventListener('error', () => {
+        candidateIndex += 1;
+        if (candidateIndex < candidates.length) {
+          profileImg.src = candidates[candidateIndex];
+        } else {
+          profileImg.hidden = true;
+          if (fallback) fallback.hidden = false;
+        }
+      });
+    }
     return root;
   }
 
@@ -858,33 +881,172 @@
     try { const u=new URL(value); return ['http:','https:'].includes(u.protocol) ? u.href : '#'; } catch { return '#'; }
   }
 
+  const LIVE_NEWS_FEEDS = [
+    { source:'BleepingComputer', url:'https://www.bleepingcomputer.com/feed/', hosts:['bleepingcomputer.com','www.bleepingcomputer.com'] },
+    { source:'Dark Reading', url:'https://www.darkreading.com/rss.xml', hosts:['darkreading.com','www.darkreading.com'] },
+    { source:'The Hacker News', url:'https://feeds.feedburner.com/TheHackersNews', hosts:['thehackernews.com','www.thehackernews.com'] }
+  ];
+  // CISA maintains this GitHub mirror specifically to make KEV data easier to consume.
+  const CISA_KEV_URL = 'https://raw.githubusercontent.com/cisagov/kev-data/develop/known_exploited_vulnerabilities.json';
+  const GITHUB_CRITICAL_URL = 'https://api.github.com/advisories?severity=critical&per_page=20';
+  const THREAT_CACHE_KEY = 'k4-threat-feed-v14';
+  const PROMO_RE = /\b(sponsored|advertorial|webinar|white\s*paper|ebook|e-book|free\s+guide|download\s+now|register\s+now|save\s+your\s+spot|resource\s+library|buyer(?:'s)?\s+guide|free\s+report|special\s+offer|limited\s+offer|partner\s+content)\b/i;
+
+  function cleanFeedText(value, limit=360) {
+    const doc = new DOMParser().parseFromString(String(value || ''), 'text/html');
+    const text = (doc.body.textContent || '').replace(/\s+/g,' ').trim();
+    return text.length > limit ? `${text.slice(0, limit - 1).trim()}…` : text;
+  }
+
+  async function fetchJsonLive(url, options={}) {
+    const res = await fetch(url, { cache:'no-store', ...options });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.json();
+  }
+
+  async function fetchRssFeed(feed) {
+    // Browser RSS is commonly CORS-blocked. rss2json exposes a CORS-enabled JSON endpoint.
+    const endpoint = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feed.url)}`;
+    const json = await fetchJsonLive(endpoint);
+    if (json.status && json.status !== 'ok') throw new Error(json.message || 'RSS bridge error');
+    return (json.items || []).map(item=>{
+      const title=cleanFeedText(item.title,220);
+      const summary=cleanFeedText(item.description || item.content,340);
+      let host='';
+      try { host=new URL(item.link).hostname.toLowerCase(); } catch { return null; }
+      if (!title || PROMO_RE.test(title) || (summary && PROMO_RE.test(summary))) return null;
+      if (feed.hosts.length && !feed.hosts.includes(host)) return null;
+      return { source:feed.source, title, url:item.link, published:item.pubDate || item.published || '', summary };
+    }).filter(Boolean).slice(0,12);
+  }
+
+  async function fetchCisaKev() {
+    const json = await fetchJsonLive(CISA_KEV_URL);
+    return (json.vulnerabilities || [])
+      .sort((a,b)=>String(b.dateAdded||'').localeCompare(String(a.dateAdded||'')))
+      .slice(0,20)
+      .map(v=>({
+        source:'CISA KEV', cve:v.cveID || '',
+        title:v.vulnerabilityName || `${v.cveID || ''} — ${v.vendorProject || ''} ${v.product || ''}`.trim(),
+        summary:cleanFeedText(v.shortDescription || v.requiredAction || '',360),
+        date_added:v.dateAdded || '',
+        url:v.cveID ? `https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=${encodeURIComponent(v.cveID)}` : 'https://www.cisa.gov/known-exploited-vulnerabilities-catalog'
+      }));
+  }
+
+  async function fetchCriticalAdvisories() {
+    const json = await fetchJsonLive(GITHUB_CRITICAL_URL, {
+      headers:{ 'Accept':'application/vnd.github+json' }
+    });
+    if (!Array.isArray(json)) throw new Error('Unexpected advisory response');
+    return json.slice(0,20).map(a=>({
+      source:'GitHub Advisory',
+      cve:a.cve_id || a.ghsa_id || '',
+      title:`${a.cve_id || a.ghsa_id || 'Critical advisory'} — CRITICAL`,
+      summary:cleanFeedText(a.summary || a.description || '',360),
+      published:a.published_at || a.updated_at || '',
+      url:a.html_url || (a.ghsa_id ? `https://github.com/advisories/${encodeURIComponent(a.ghsa_id)}` : 'https://github.com/advisories'),
+      score:a.cvss?.score
+    }));
+  }
+
+  function readThreatCache() {
+    try {
+      const parsed=JSON.parse(localStorage.getItem(THREAT_CACHE_KEY) || 'null');
+      if (!parsed || !Array.isArray(parsed.news)) return null;
+      return parsed;
+    } catch { return null; }
+  }
+
+  function writeThreatCache(data) {
+    try { localStorage.setItem(THREAT_CACHE_KEY, JSON.stringify(data)); } catch {}
+  }
+
   function renderThreatFeed() {
     const root=document.createElement('div'); root.className='panel-content feed-panel';
-    root.innerHTML=`<div class="panel-eyebrow">LIVE INDEX // SECURITY ONLY</div><div class="feed-head"><div><h2>Threat Feed</h2><p>Known exploited vulnerabilities, critical CVEs, and security reporting. Promotional entries are filtered by the updater.</p></div><button class="mini-btn" data-feed-refresh>REFRESH</button></div><div class="feed-meta" data-feed-meta>Loading local feed cache…</div><div class="feed-tabs"><button class="mini-btn active" data-feed-tab="all">ALL</button><button class="mini-btn" data-feed-tab="kev">KNOWN EXPLOITED</button><button class="mini-btn" data-feed-tab="critical">CRITICAL CVEs</button><button class="mini-btn" data-feed-tab="news">NEWS</button></div><div class="feed-list" data-feed-list><div class="feed-loading">Connecting to /assets/threat-feed.json…</div></div>`;
-    let data=null, tab='all';
-    const list=root.querySelector('[data-feed-list]'), meta=root.querySelector('[data-feed-meta]');
+    root.innerHTML=`<div class="panel-eyebrow">LIVE SECURITY FEEDS // NO SCHEDULED BACKEND</div><div class="feed-head"><div><h2>Threat Feed</h2><p>Live CISA KEV, critical GitHub security advisories, and security-news RSS. The browser refreshes every source when this window opens.</p></div><button class="mini-btn" data-feed-refresh>REFRESH LIVE</button></div><div class="feed-meta" data-feed-meta>Connecting to live sources…</div><div class="feed-source-status" data-feed-status></div><div class="feed-tabs"><button class="mini-btn active" data-feed-tab="all">ALL</button><button class="mini-btn" data-feed-tab="kev">KNOWN EXPLOITED</button><button class="mini-btn" data-feed-tab="critical">CRITICAL</button><button class="mini-btn" data-feed-tab="news">NEWS</button></div><div class="feed-list" data-feed-list><div class="feed-loading">Fetching live threat intelligence…</div></div>`;
+    let data={known_exploited:[],critical:[],news:[],errors:[],generated_at:'',source_status:{}}, tab='all', loading=false;
+    const list=root.querySelector('[data-feed-list]'), meta=root.querySelector('[data-feed-meta]'), status=root.querySelector('[data-feed-status]');
     const dateText=value=>{ if(!value) return ''; const d=new Date(value); return Number.isNaN(d.valueOf()) ? value : d.toLocaleString([], {dateStyle:'medium', timeStyle:'short'}); };
+
+    const drawStatus=()=>{
+      const labels=['CISA KEV','Critical Advisories','BleepingComputer','Dark Reading','The Hacker News'];
+      status.innerHTML=labels.map(name=>{
+        const s=data.source_status?.[name] || {state:'idle',count:0};
+        return `<span class="feed-status-chip ${esc(s.state)}"><i></i>${esc(name)} <b>${s.state==='ok'?s.count:s.state.toUpperCase()}</b></span>`;
+      }).join('');
+    };
+
     const draw=()=>{
-      if(!data) return;
-      if(!data.generated_at && !(data.news||[]).length && !(data.known_exploited||[]).length && !(data.critical||[]).length) {
-        meta.textContent='FEED CACHE WAITING FOR FIRST UPDATE';
-        list.innerHTML='<div class="feed-error"><strong>Threat feed is installed but not populated yet.</strong><p>After uploading this build, open GitHub → Actions → <code>Update threat feed</code> → Run workflow once. After that it refreshes automatically every hour.</p></div>';
-        return;
-      }
       let items=[];
-      if(tab==='all'||tab==='kev') items.push(...(data.known_exploited||[]).map(x=>({...x,kind:'KEV'})));
-      if(tab==='all'||tab==='critical') items.push(...(data.critical||[]).map(x=>({...x,kind:'CRITICAL'})));
-      if(tab==='all'||tab==='news') items.push(...(data.news||[]).map(x=>({...x,kind:'NEWS'})));
+      if(tab==='all'||tab==='kev') items.push(...data.known_exploited.map(x=>({...x,kind:'KEV'})));
+      if(tab==='all'||tab==='critical') items.push(...data.critical.map(x=>({...x,kind:'CRITICAL'})));
+      if(tab==='all'||tab==='news') items.push(...data.news.map(x=>({...x,kind:'NEWS'})));
       items.sort((a,b)=>String(b.published||b.date_added||'').localeCompare(String(a.published||a.date_added||'')));
-      if(tab==='all') items=items.slice(0,32);
+      if(tab==='all') items=items.slice(0,42);
       list.innerHTML=items.length?items.map(item=>`<article class="feed-item ${item.kind.toLowerCase()}"><div class="feed-item-meta"><span>${esc(item.kind)}</span><span>${esc(item.source||'')}</span><time>${esc(dateText(item.published||item.date_added))}</time></div><h3><a href="${esc(safeExternalUrl(item.url||item.link||''))}" target="_blank" rel="noreferrer">${esc(item.title||item.cve||'Untitled')}</a></h3>${item.summary?`<p>${esc(item.summary)}</p>`:''}${item.cve&&item.title!==item.cve?`<code>${esc(item.cve)}</code>`:''}</article>`).join(''):'<div class="feed-loading">No entries in this section yet.</div>';
-      meta.textContent=`UPDATED ${dateText(data.generated_at)||'unknown'} // ${(data.news||[]).length} NEWS // ${(data.known_exploited||[]).length} KEV // ${(data.critical||[]).length} CRITICAL`;
+      const errText=data.errors.length ? ` // ${data.errors.length} SOURCE ERROR${data.errors.length===1?'':'S'}` : '';
+      const cacheText=data.cached ? 'CACHED FALLBACK' : 'LIVE';
+      meta.textContent=`${cacheText} ${dateText(data.generated_at)||''} // ${data.news.length} NEWS // ${data.known_exploited.length} KEV // ${data.critical.length} CRITICAL${errText}`;
+      if(data.errors.length) {
+        const note=document.createElement('div'); note.className='feed-source-errors'; note.textContent=`Unavailable this refresh: ${data.errors.join(' · ')}`; list.prepend(note);
+      }
+      drawStatus();
     };
+
+    const markLoading=()=>{
+      data.source_status={
+        'CISA KEV':{state:'loading',count:0},
+        'Critical Advisories':{state:'loading',count:0},
+        'BleepingComputer':{state:'loading',count:0},
+        'Dark Reading':{state:'loading',count:0},
+        'The Hacker News':{state:'loading',count:0}
+      };
+      drawStatus();
+    };
+
+    async function runSource(name, fn, onSuccess) {
+      try {
+        const items=await fn();
+        onSuccess(items);
+        data.source_status[name]={state:'ok',count:items.length};
+      } catch(err) {
+        console.warn(`[Threat Feed] ${name} failed`, err);
+        data.source_status[name]={state:'error',count:0};
+        data.errors.push(name);
+      }
+      drawStatus();
+    }
+
     const load=async()=>{
-      meta.textContent='Refreshing local feed cache…';
-      try { const res=await fetch(`/assets/threat-feed.json?v=${Date.now()}`,{cache:'no-store'}); if(!res.ok) throw new Error(`HTTP ${res.status}`); data=await res.json(); draw(); }
-      catch(err){ list.innerHTML=`<div class="feed-error"><strong>Feed cache unavailable.</strong><p>The GitHub Action may not have run yet. Run <code>Update threat feed</code> once from the Actions tab.</p><p>${esc(err.message)}</p><div class="feed-source-links"><a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog" target="_blank" rel="noreferrer">CISA KEV ↗</a><a href="https://www.bleepingcomputer.com/" target="_blank" rel="noreferrer">BleepingComputer ↗</a><a href="https://www.darkreading.com/" target="_blank" rel="noreferrer">Dark Reading ↗</a><a href="https://thehackernews.com/" target="_blank" rel="noreferrer">The Hacker News ↗</a></div></div>`; meta.textContent='LOCAL FEED CACHE NOT READY'; }
+      if(loading) return; loading=true;
+      const cached=readThreatCache();
+      if(cached) {
+        data={...cached,cached:true,errors:cached.errors||[],source_status:cached.source_status||{}};
+        draw();
+        meta.textContent=`Refreshing live sources… showing cached data from ${dateText(cached.generated_at)} meanwhile.`;
+      } else {
+        data={known_exploited:[],critical:[],news:[],errors:[],generated_at:'',source_status:{},cached:false};
+        list.innerHTML='<div class="feed-loading">Connecting to CISA, GitHub Security Advisories, BleepingComputer, Dark Reading, and The Hacker News…</div>';
+      }
+      data.known_exploited=[]; data.critical=[]; data.news=[]; data.errors=[]; data.cached=false;
+      markLoading();
+
+      await Promise.allSettled([
+        runSource('CISA KEV', fetchCisaKev, items=>data.known_exploited=items),
+        runSource('Critical Advisories', fetchCriticalAdvisories, items=>data.critical=items),
+        ...LIVE_NEWS_FEEDS.map(feed=>runSource(feed.source, ()=>fetchRssFeed(feed), items=>data.news.push(...items)))
+      ]);
+
+      const seen=new Set();
+      data.news=data.news.sort((a,b)=>String(b.published||'').localeCompare(String(a.published||''))).filter(item=>{ const key=(item.url||item.title||'').toLowerCase(); if(!key||seen.has(key)) return false; seen.add(key); return true; }).slice(0,36);
+      data.generated_at=new Date().toISOString();
+      const anyLive=data.known_exploited.length||data.critical.length||data.news.length;
+      if(anyLive) writeThreatCache(data);
+      else if(cached) data={...cached,cached:true,errors:['All live sources'],source_status:data.source_status};
+      loading=false; draw();
     };
+
     root.addEventListener('click',e=>{ const b=e.target.closest('[data-feed-tab]'); if(b){tab=b.dataset.feedTab;root.querySelectorAll('[data-feed-tab]').forEach(x=>x.classList.toggle('active',x===b));draw();return;} if(e.target.closest('[data-feed-refresh]')) load(); });
     load(); return root;
   }
@@ -1127,7 +1289,7 @@
       '[  OK  ] Starting K4INU SIGNAL//FM audio service',
       '[  OK  ] Loading Tool Trail operator mini-game',
       '[  OK  ] Mounting CTF Workbench transforms',
-      '[  OK  ] Loading local threat-feed cache',
+      '[  OK  ] Connecting live RSS threat feed',
       '[  OK  ] Registering Pizzint Watch mini-browser',
       '',
       'K4INU_OS ready.'
