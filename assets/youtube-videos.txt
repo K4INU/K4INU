@@ -1,6 +1,7 @@
 # K4INU Lock Lab playlist
-# One YouTube URL per line.
-# Optional format: Title | URL
-# Example:
-Master Lock M530 | https://www.youtube.com/watch?v=4KcTArpbCi0
 
+Master Lock M530 | https://www.youtube.com/watch?v=4KcTArpbCi0
+Master Lock NO.1 | https://www.youtube.com/watch?v=M3dffA0tfMw
+Master Lock 570  | https://www.youtube.com/watch?v=akBsVbqnIC0
+American 1100 Green | https://www.youtube.com/watch?v=Ka09dJYBtn4
+PACLOCK P90a PRO | https://www.youtube.com/watch?v=AsIkCdkCckY
