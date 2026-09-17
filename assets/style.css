@@ -325,24 +325,25 @@ a { color: inherit; }
 .radio-glyph { border-color:rgba(255,48,72,.62); color:#ff5268; box-shadow:inset -9px 0 20px rgba(33,140,255,.11),inset 9px 0 20px rgba(255,48,72,.1),0 8px 22px rgba(0,0,0,.35); }
 
 .signal-dock {
-  position:absolute; z-index:8; right:18px; bottom:calc(var(--taskbar-h) + 14px); width:292px; height:56px;
-  display:grid; grid-template-columns:1fr 62px 42px; align-items:center; gap:7px; padding:6px;
-  border:1px solid rgba(33,140,255,.48); background:linear-gradient(100deg,rgba(28,4,10,.96),rgba(4,12,30,.96));
-  box-shadow:0 12px 38px rgba(0,0,0,.48), inset 3px 0 rgba(255,48,72,.72), inset -3px 0 rgba(33,140,255,.55); backdrop-filter:blur(8px);
+  position:relative; flex:0 0 292px; align-self:stretch; min-width:0; height:100%;
+  display:grid; grid-template-columns:minmax(0,1fr) 54px 38px; align-items:center; gap:6px; padding:4px 7px;
+  border:0; border-left:1px solid rgba(255,48,72,.42); border-right:1px solid rgba(33,140,255,.42);
+  background:linear-gradient(100deg,rgba(28,4,10,.72),rgba(4,12,30,.78));
+  box-shadow:inset 3px 0 rgba(255,48,72,.55), inset -3px 0 rgba(33,140,255,.42);
 }
-.signal-main { min-width:0; height:100%; display:flex; align-items:center; gap:8px; border:0; background:transparent; color:#c8d8ed; text-align:left; cursor:pointer; }
+.signal-main { min-width:0; height:100%; display:flex; align-items:center; gap:8px; border:0; background:transparent; color:#c8d8ed; text-align:left; cursor:pointer; padding:0 2px; }
 .signal-main > span:last-child { min-width:0; }
-.signal-main small { display:block; color:#ff687b; font-size:8px; letter-spacing:.1em; margin-bottom:4px; }
-.signal-main strong { display:block; max-width:145px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; color:#73b7ff; font-size:10px; letter-spacing:.06em; }
+.signal-main small { display:block; color:#ff687b; font-size:7px; letter-spacing:.1em; margin-bottom:2px; }
+.signal-main strong { display:block; max-width:150px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; color:#73b7ff; font-size:9px; letter-spacing:.06em; }
 .signal-led { display:inline-block; width:7px; height:7px; flex:0 0 7px; border-radius:50%; background:#35465d; box-shadow:0 0 0 rgba(33,140,255,0); }
 .playing .signal-led { background:var(--signal-blue); box-shadow:0 0 7px rgba(33,140,255,.95),0 0 15px rgba(255,48,72,.7); }
-.signal-bars { height:24px; display:flex; align-items:flex-end; justify-content:center; gap:4px; opacity:.72; }
-.signal-bars i { width:3px; height:7px; display:block; background:linear-gradient(to top,var(--signal-red) 0 48%,var(--signal-blue) 52% 100%); }
-.signal-bars i:nth-child(2){height:15px}.signal-bars i:nth-child(3){height:22px}.signal-bars i:nth-child(4){height:13px}.signal-bars i:nth-child(5){height:18px}
+.signal-bars { height:20px; display:flex; align-items:flex-end; justify-content:center; gap:3px; opacity:.72; }
+.signal-bars i { width:3px; height:6px; display:block; background:linear-gradient(to top,var(--signal-red) 0 48%,var(--signal-blue) 52% 100%); }
+.signal-bars i:nth-child(2){height:13px}.signal-bars i:nth-child(3){height:18px}.signal-bars i:nth-child(4){height:11px}.signal-bars i:nth-child(5){height:15px}
 .signal-dock.playing .signal-bars i { animation:signal-bounce .68s steps(4,end) infinite alternate; }
 .signal-dock.playing .signal-bars i:nth-child(2){animation-delay:.12s}.signal-dock.playing .signal-bars i:nth-child(3){animation-delay:.3s}.signal-dock.playing .signal-bars i:nth-child(4){animation-delay:.18s}.signal-dock.playing .signal-bars i:nth-child(5){animation-delay:.4s}
 @keyframes signal-bounce { from{transform:scaleY(.35)} to{transform:scaleY(1.15)} }
-.signal-play { width:38px; height:38px; border:1px solid rgba(255,48,72,.68); background:linear-gradient(135deg,rgba(88,5,18,.7),rgba(4,35,82,.72)); color:#ff7183; cursor:pointer; box-shadow:inset -7px 0 15px rgba(33,140,255,.1); }
+.signal-play { width:34px; height:34px; border:1px solid rgba(255,48,72,.68); background:linear-gradient(135deg,rgba(88,5,18,.7),rgba(4,35,82,.72)); color:#ff7183; cursor:pointer; box-shadow:inset -7px 0 15px rgba(33,140,255,.1); }
 .signal-play:hover { border-color:#218cff; color:#fff; box-shadow:0 0 13px rgba(33,140,255,.25), inset 0 0 12px rgba(255,48,72,.18); }
 
 .radio-console { min-height:100%; background:radial-gradient(circle at 78% 13%,rgba(33,140,255,.17),transparent 34%),radial-gradient(circle at 16% 82%,rgba(255,48,72,.15),transparent 36%),#04060b; }
@@ -389,10 +390,11 @@ a { color: inherit; }
   .obsidian-layout { grid-template-columns:70px 1fr; align-items:start; }
   .obsidian-mark { width:66px; height:66px; }
   .obsidian-layout .speaker-actions { grid-column:1/-1; }
-  .signal-dock { right:8px; left:8px; bottom:calc(var(--taskbar-h) + 8px); width:auto; height:48px; grid-template-columns:1fr 48px 38px; }
+  .signal-dock { flex-basis:190px; grid-template-columns:minmax(0,1fr) 34px; gap:4px; padding:4px 5px; }
   .signal-main small { display:none; }
-  .signal-bars { height:18px; }
-  .signal-play { width:34px; height:34px; }
+  .signal-main strong { max-width:105px; font-size:8px; }
+  .signal-bars { display:none; }
+  .signal-play { width:32px; height:32px; }
   .radio-display { grid-template-columns:96px 1fr; min-height:120px; padding:13px; }
   .radio-frequency { font-size:25px; }
   .radio-now strong { font-size:16px; }
@@ -404,8 +406,10 @@ a { color: inherit; }
   .radio-tracks { grid-template-columns:1fr; }
 }
 
-@media (max-height:620px) and (min-width:851px) {
-  .signal-dock { display:none; }
+@media (max-width:620px) {
+  .task-buttons { display:none; }
+  .signal-dock { flex:1 1 auto; }
+  .signal-main strong { max-width:120px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -607,3 +611,23 @@ a { color: inherit; }
   .lock-guide { grid-template-columns:1fr 1fr; }
   .video-playlist { max-height:260px; }
 }
+
+
+/* v20 Lock Lab silent-only player */
+.video-head-actions { display:flex; align-items:center; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
+.video-muted-badge,.video-silent-label { border:1px solid rgba(255,70,84,.48); background:rgba(73,7,15,.45); color:#ff8793; padding:5px 7px; font-size:8px; letter-spacing:.13em; white-space:nowrap; }
+.video-now { align-items:center; }
+.video-silent-label { justify-self:end; }
+.video-controls { display:grid; grid-template-columns:repeat(5,minmax(0,auto)); gap:7px; padding:9px; border:1px solid #2c404d; border-top:0; background:#050c12; }
+.video-controls button { min-height:34px; }
+.youtube-frame::after { content:'AUDIO DISABLED'; position:absolute; right:8px; top:8px; z-index:2; padding:4px 6px; border:1px solid rgba(255,70,84,.48); background:rgba(13,4,7,.84); color:#ff8490; font-size:8px; letter-spacing:.12em; pointer-events:none; }
+@media (max-width:850px) {
+  .video-head-actions { justify-content:flex-start; }
+  .video-controls { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .video-controls button:last-child { grid-column:1/-1; }
+  .video-silent-label { justify-self:start; }
+}
+
+/* v21 taskbar-integrated Signal FM */
+.taskbar .signal-dock { z-index:1; }
+.taskbar .signal-main:focus-visible, .taskbar .signal-play:focus-visible { outline:1px solid #7ebcff; outline-offset:-2px; }

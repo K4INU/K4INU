@@ -1335,30 +1335,44 @@
     const root=document.createElement('div'); root.className='panel-content video-lab';
     let videos=[], active=0;
     root.innerHTML=`
-      <div class="panel-eyebrow">LOCK LAB // YOUTUBE PLAYLIST</div>
-      <div class="video-head"><div><h2>Lock Picking Videos</h2><p>Playlist is loaded from <code>assets/youtube-videos.txt</code>. Put one YouTube link per line, or use <code>Title | URL</code>.</p></div><button class="ui-button" data-video-refresh>REFRESH LIST</button></div>
+      <div class="panel-eyebrow">LOCK LAB // SILENT YOUTUBE PLAYLIST</div>
+      <div class="video-head"><div><h2>Lock Picking Videos</h2><p>Playlist is loaded from <code>assets/youtube-videos.txt</code>. Embedded playback is permanently muted by design.</p></div><div class="video-head-actions"><span class="video-muted-badge">AUDIO DISABLED</span><button class="ui-button" data-video-refresh>REFRESH LIST</button></div></div>
       <div class="video-layout"><div class="video-stage" data-video-stage><div class="video-empty">LOADING VIDEO LIST…</div></div><aside class="video-playlist" data-video-list></aside></div>
-      <div class="video-file-note">Example: <code>Practice Lock 01 | https://youtu.be/VIDEO_ID</code> &nbsp; // &nbsp; Lines beginning with <code>#</code> are ignored.</div>`;
+      <div class="video-file-note">Example: <code>Practice Lock 01 | https://youtu.be/VIDEO_ID</code> &nbsp; // &nbsp; Lines beginning with <code>#</code> are ignored. Lock Lab never enables embedded audio.</div>`;
     const stage=root.querySelector('[data-video-stage]'), list=root.querySelector('[data-video-list]');
+
+    const playerCommand=(func,args=[])=>{
+      const frame=stage.querySelector('iframe'); if(!frame?.contentWindow) return;
+      frame.contentWindow.postMessage(JSON.stringify({event:'command',func,args}),'https://www.youtube-nocookie.com');
+    };
+    const forceMute=()=>{ playerCommand('mute'); playerCommand('setVolume',[0]); };
 
     const paint=()=>{
       if(!videos.length){ stage.innerHTML='<div class="video-empty"><strong>NO VIDEOS FOUND</strong><span>Add YouTube links to assets/youtube-videos.txt, commit the file, then press REFRESH LIST.</span></div>'; list.innerHTML=''; return; }
       const v=videos[Math.max(0,Math.min(active,videos.length-1))];
-      stage.innerHTML=`<div class="youtube-frame"><iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(v.id)}?rel=0" title="${esc(v.title)}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div><div class="video-now"><small>NOW PLAYING</small><strong>${esc(v.title)}</strong><a href="${esc(v.url)}" target="_blank" rel="noreferrer">OPEN ON YOUTUBE ↗</a></div>`;
+      const origin=encodeURIComponent(location.origin);
+      stage.innerHTML=`<div class="youtube-frame"><iframe data-youtube-frame src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(v.id)}?rel=0&controls=0&disablekb=1&playsinline=1&mute=1&enablejsapi=1&origin=${origin}" title="${esc(v.title)}" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin"></iframe></div><div class="video-now"><small>NOW PLAYING // AUDIO DISABLED</small><strong>${esc(v.title)}</strong><span class="video-silent-label">SILENT MODE</span></div><div class="video-controls"><button class="mini-btn" data-video-prev>◀ PREV</button><button class="ui-button primary" data-video-play>PLAY</button><button class="ui-button" data-video-pause>PAUSE</button><button class="mini-btn" data-video-restart>RESTART</button><button class="mini-btn" data-video-next>NEXT ▶</button></div>`;
       list.innerHTML=videos.map((item,i)=>`<button class="video-item ${i===active?'active':''}" data-video-index="${i}"><span>${String(i+1).padStart(2,'0')}</span><strong>${esc(item.title)}</strong><small>${esc(item.id)}</small></button>`).join('');
+      const frame=stage.querySelector('iframe');
+      frame?.addEventListener('load',()=>{ setTimeout(forceMute,120); setTimeout(forceMute,700); },{once:true});
     };
 
     const load=async()=>{
       stage.innerHTML='<div class="video-empty">READING assets/youtube-videos.txt…</div>'; list.innerHTML='';
       try{
-        const res=await fetch(`/assets/youtube-videos.txt?v=19f1`,{cache:'no-store'});
+        const res=await fetch(`/assets/youtube-videos.txt?v=21f1`,{cache:'no-store'});
         if(!res.ok) throw new Error(`HTTP ${res.status}`);
         videos=parseVideoList(await res.text()); active=0; paint();
       }catch(err){ stage.innerHTML=`<div class="video-empty"><strong>VIDEO LIST UNAVAILABLE</strong><span>${esc(err.message)}. Make sure assets/youtube-videos.txt exists and test through https://kainu.codes or a local web server.</span></div>`; }
     };
     root.addEventListener('click',e=>{
       const item=e.target.closest('[data-video-index]'); if(item){ active=Number(item.dataset.videoIndex); paint(); return; }
-      if(e.target.closest('[data-video-refresh]')) load();
+      if(e.target.closest('[data-video-refresh]')) { load(); return; }
+      if(e.target.closest('[data-video-play]')) { forceMute(); playerCommand('playVideo'); setTimeout(forceMute,100); return; }
+      if(e.target.closest('[data-video-pause]')) { playerCommand('pauseVideo'); forceMute(); return; }
+      if(e.target.closest('[data-video-restart]')) { playerCommand('seekTo',[0,true]); forceMute(); playerCommand('playVideo'); setTimeout(forceMute,100); return; }
+      if(e.target.closest('[data-video-prev]')) { if(videos.length){ active=(active-1+videos.length)%videos.length; paint(); } return; }
+      if(e.target.closest('[data-video-next]')) { if(videos.length){ active=(active+1)%videos.length; paint(); } return; }
     });
     load(); return root;
   }
