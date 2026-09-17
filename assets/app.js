@@ -12,7 +12,7 @@
     game: { title: 'TOOL TRAIL // operator game', icon: 'TT', status: '7-stage choose-the-right-tool run', width: 820, height: 620, render: renderToolTrail },
     toolkit: { title: 'CTF WORKBENCH // decoder toolkit', icon: 'CTF', status: 'local transforms // nothing leaves your browser', width: 860, height: 650, render: renderToolkit },
     feed: { title: 'THREAT FEED // vuln + hacker news', icon: 'RF', status: 'LIVE // CISA KEV // critical advisories // security news // v15', width: 900, height: 650, render: renderThreatFeed },
-    pizzint: { title: 'PIZZINT WATCH // live launcher', icon: 'PZ', status: 'opens pizzint.watch in a live popup', width: 590, height: 400, render: renderPizzint }
+    pizzint: { title: 'PIZZINT WATCH // external launcher', icon: 'PZ', status: 'third-party site // direct browser launch', width: 590, height: 420, render: renderPizzint }
   };
 
   const PROJECTS = [
@@ -499,7 +499,7 @@
           print('game                 open tool-selection game');
           print('toolkit              open CTF decoder workbench');
           print('feed                 open threat + vulnerability feed');
-          print('pizzint              open Pizzint Watch mini-browser');
+          print('pizzint              open PizzINT live site');
           print('play / pause          control Signal FM');
           print('github               open github.com/K4INU');
           print('date                  local browser date/time');
@@ -520,7 +520,7 @@
           break;
         case 'open': {
           const aliases = { project:'projects', projects:'projects', badge:'credentials', badges:'credentials', credentials:'credentials', defcon:'credentials', hrv:'credentials', ham:'credentials', about:'about', resources:'resources', resource:'resources', system:'system', terminal:'terminal', radio:'radio', music:'radio', signal:'radio', game:'game', trail:'game', tooltrail:'game', tools:'game', toolkit:'toolkit', ctf:'toolkit', decode:'toolkit', decoder:'toolkit', feed:'feed', threats:'feed', news:'feed', pizzint:'pizzint', pizza:'pizzint' };
-          if (aliases[arg] === 'pizzint') launchPizzintPopup();
+          if (aliases[arg] === 'pizzint') openApp('pizzint');
           else if (aliases[arg]) openApp(aliases[arg]);
           else {
             const project = PROJECTS.find(p => p.id === arg || p.name.toLowerCase() === arg);
@@ -547,7 +547,7 @@
           print('Community:   DEF CON SOC GOON / DC33 + DC34 speaker / BTV CTF DC32–34');
           print('Radio:       Ham Radio Village / Pinky + the Brain Fox / DC34');
           print('Mini-game:   Tool Trail // 7-stage run');
-          print('Workbench:   CTF decoder // Base64 / ROT / Caesar / Pigpen / more');
+          print('Workbench:   CTF decoder // text transforms + QR images');
           print('Threats:     CISA KEV + critical CVEs + security news');
           print('Deployment:  GitHub Pages');
           print(`Viewport:    ${window.innerWidth}x${window.innerHeight}`);
@@ -556,7 +556,7 @@
         case 'game': case 'trail': case 'tools': openApp('game'); break;
         case 'toolkit': case 'ctf': case 'decode': openApp('toolkit'); break;
         case 'feed': case 'threats': case 'news': openApp('feed'); break;
-        case 'pizzint': case 'pizza': launchPizzintPopup(); break;
+        case 'pizzint': case 'pizza': launchPizzintDirect(); break;
         case 'play': playRadio(); print('Signal FM: transmitting.', 'dim'); break;
         case 'pause': pauseRadio(); print('Signal FM: standby.', 'dim'); break;
         case 'github':
@@ -758,7 +758,7 @@
         <div class="resource-row"><span class="tag">TALK</span><span>Threat Hunting 101: Beyond the Alerts</span><a href="https://defcon.outel.org/defcon33/dc33_schedule.pdf" target="_blank" rel="noreferrer">SCHEDULE ↗</a></div>
         <div class="resource-row"><span class="tag">CTF</span><span>Local CTF decoder workbench</span><button class="mini-btn" data-open="toolkit">OPEN</button></div>
         <div class="resource-row"><span class="tag">FEED</span><span>Threat + vulnerability feed</span><button class="mini-btn" data-open="feed">OPEN</button></div>
-        <div class="resource-row"><span class="tag">OSINT</span><span>PizzINT Watch</span><a class="mini-btn" href="https://www.pizzint.watch/" target="k4inu_pizzint_live" data-pizzint-link>OPEN LIVE ↗</a></div>
+        <div class="resource-row"><span class="tag">OSINT</span><span>PizzINT Watch</span><button class="mini-btn" data-open="pizzint">OPEN</button></div>
       </div>`;
     return root;
   }
@@ -847,6 +847,50 @@
     }
   }
 
+  async function loadImageForQr(file) {
+    if ('createImageBitmap' in window) return await createImageBitmap(file);
+    return await new Promise((resolve, reject) => {
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = () => { URL.revokeObjectURL(url); resolve(img); };
+      img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Could not read image.')); };
+      img.src = url;
+    });
+  }
+
+  async function decodeQrImage(file, canvas) {
+    if (!file) throw new Error('Choose an image first.');
+    const img = await loadImageForQr(file);
+    const maxSide = 1800;
+    const sourceW = img.width || img.naturalWidth;
+    const sourceH = img.height || img.naturalHeight;
+    const scale = Math.min(1, maxSide / Math.max(sourceW, sourceH));
+    canvas.width = Math.max(1, Math.round(sourceW * scale));
+    canvas.height = Math.max(1, Math.round(sourceH * scale));
+    const ctx = canvas.getContext('2d', { willReadFrequently:true });
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.drawImage(img,0,0,canvas.width,canvas.height);
+    if (img.close) try { img.close(); } catch {}
+
+    if ('BarcodeDetector' in window) {
+      try {
+        const formats = await BarcodeDetector.getSupportedFormats?.();
+        if (!formats || formats.includes('qr_code')) {
+          const detector = new BarcodeDetector({ formats:['qr_code'] });
+          const found = await detector.detect(canvas);
+          if (found && found[0]?.rawValue) return found[0].rawValue;
+        }
+      } catch {}
+    }
+
+    if (typeof window.jsQR === 'function') {
+      const image = ctx.getImageData(0,0,canvas.width,canvas.height);
+      const result = window.jsQR(image.data, canvas.width, canvas.height, { inversionAttempts:'attemptBoth' });
+      if (result?.data) return result.data;
+    }
+    throw new Error('No QR code found in that image. Try a sharper or tighter crop.');
+  }
+
   function renderToolkit() {
     const root = document.createElement('div'); root.className='panel-content toolkit-panel';
     root.innerHTML = `
@@ -862,7 +906,17 @@
         <label>OUTPUT<textarea data-toolkit-output spellcheck="false" readonly placeholder="Result appears here..."></textarea></label>
       </div>
       <div class="toolkit-actions"><button class="ui-button primary" data-toolkit-run>RUN TRANSFORM</button><button class="ui-button" data-toolkit-swap>SWAP</button><button class="ui-button" data-toolkit-copy>COPY OUTPUT</button><button class="ui-button" data-toolkit-clear>CLEAR</button></div>
-      <p class="toolkit-note">Pigpen has no universal plain-text character set. This workbench uses a documented Unicode site notation: grid symbols, with <strong>•</strong> marking the dotted set.</p>`;
+      <p class="toolkit-note">Pigpen has no universal plain-text character set. This workbench uses a documented Unicode site notation: grid symbols, with <strong>•</strong> marking the dotted set.</p>
+      <section class="qr-workbench">
+        <div class="qr-head"><div><small>IMAGE DECODER</small><h3>QR Decoder</h3><p>Upload a QR-code image. Decoding happens locally in your browser.</p></div><span class="local-badge">LOCAL IMAGE</span></div>
+        <div class="qr-grid">
+          <label class="qr-drop">QR IMAGE<input type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/*" data-qr-file /><span>SELECT IMAGE</span><img data-qr-preview alt="QR preview" hidden /></label>
+          <label>DECODED CONTENT<textarea data-qr-output readonly placeholder="QR contents appear here..."></textarea></label>
+        </div>
+        <canvas data-qr-canvas hidden></canvas>
+        <div class="toolkit-actions"><button class="ui-button primary" data-qr-decode>DECODE QR</button><button class="ui-button" data-qr-copy>COPY RESULT</button><button class="ui-button" data-qr-clear>CLEAR QR</button></div>
+        <p class="toolkit-note" data-qr-status>Choose a QR image to begin.</p>
+      </section>`;
     const input=root.querySelector('[data-toolkit-input]'), output=root.querySelector('[data-toolkit-output]'), kind=root.querySelector('[data-toolkit-kind]'), shift=root.querySelector('[data-toolkit-shift]');
     let direction='decode';
     const run=()=>{ try { output.value=runTransform(kind.value,direction,input.value,shift.value); } catch(err) { output.value=`ERROR: ${err.message}`; } };
@@ -875,6 +929,30 @@
     });
     kind.addEventListener('change',()=>root.querySelector('.shift-control').classList.toggle('visible',kind.value==='caesar'));
     input.addEventListener('keydown',e=>{ if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();run();} });
+
+    const qrFile=root.querySelector('[data-qr-file]');
+    const qrPreview=root.querySelector('[data-qr-preview]');
+    const qrOutput=root.querySelector('[data-qr-output]');
+    const qrCanvas=root.querySelector('[data-qr-canvas]');
+    const qrStatus=root.querySelector('[data-qr-status]');
+    let selectedQrFile=null;
+
+    const showQrPreview=(file)=>{
+      if(qrPreview.dataset.objectUrl) URL.revokeObjectURL(qrPreview.dataset.objectUrl);
+      if(!file){ qrPreview.hidden=true; qrPreview.removeAttribute('src'); delete qrPreview.dataset.objectUrl; return; }
+      const url=URL.createObjectURL(file); qrPreview.dataset.objectUrl=url; qrPreview.src=url; qrPreview.hidden=false;
+    };
+    const runQr=async()=>{
+      qrOutput.value=''; qrStatus.textContent='Decoding QR locally...';
+      try { const value=await decodeQrImage(selectedQrFile,qrCanvas); qrOutput.value=value; qrStatus.textContent='QR decoded successfully.'; }
+      catch(err){ qrStatus.textContent=`QR decode failed: ${err.message}`; }
+    };
+    qrFile.addEventListener('change',()=>{ selectedQrFile=qrFile.files?.[0]||null; showQrPreview(selectedQrFile); qrStatus.textContent=selectedQrFile ? `Ready: ${selectedQrFile.name}` : 'Choose a QR image to begin.'; if(selectedQrFile) runQr(); });
+    root.addEventListener('click',async e=>{
+      if(e.target.closest('[data-qr-decode]')){ await runQr(); return; }
+      if(e.target.closest('[data-qr-copy]')){ try{ await navigator.clipboard.writeText(qrOutput.value); toast('QR result copied.'); } catch { toast('Copy unavailable in this browser.'); } return; }
+      if(e.target.closest('[data-qr-clear]')){ selectedQrFile=null; qrFile.value=''; qrOutput.value=''; qrStatus.textContent='Choose a QR image to begin.'; showQrPreview(null); }
+    });
     return root;
   }
 
@@ -1052,68 +1130,38 @@
     load(); return root;
   }
 
-  function launchPizzintPopup(fallbackAnchor) {
+  function launchPizzintDirect() {
     const url = 'https://www.pizzint.watch/';
-    const width = Math.min(980, Math.max(720, Math.round((window.screen.availWidth || window.innerWidth) * .72)));
-    const height = Math.min(780, Math.max(560, Math.round((window.screen.availHeight || window.innerHeight) * .78)));
-    const left = Math.max(0, Math.round(((window.screen.availWidth || window.innerWidth) - width) / 2));
-    const top = Math.max(0, Math.round(((window.screen.availHeight || window.innerHeight) - height) / 2));
-    const features = `popup=yes,width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`;
-
-    let popup = null;
-    try {
-      // Opening a same-origin blank window first is more reliable than opening a cross-origin URL with noopener flags.
-      popup = window.open('about:blank', 'k4inu_pizzint_live', features);
-    } catch {}
-
-    if (popup) {
-      try { popup.opener = null; } catch {}
-      try {
-        popup.location.replace(url);
-        popup.focus();
-        toast('PizzINT live window launched.');
-        return true;
-      } catch {}
+    let opened = null;
+    try { opened = window.open(url, '_blank'); } catch {}
+    if (opened) {
+      try { opened.opener = null; } catch {}
+      toast('Opening PizzINT in a new browser tab.');
+      return true;
     }
-
-    // Let a real anchor continue normally when popup creation is blocked.
-    if (fallbackAnchor && fallbackAnchor.href) {
-      toast('Popup sizing blocked — opening PizzINT in a normal tab.');
-      return false;
-    }
-
-    // Terminal / non-anchor fallback.
-    try {
-      const tab = window.open(url, '_blank');
-      if (tab) {
-        try { tab.opener = null; } catch {}
-        toast('PizzINT opened in a new tab.');
-        return true;
-      }
-    } catch {}
-    toast('Your browser blocked the PizzINT window. Allow popups for kainu.codes, then try again.');
+    toast('Browser blocked the new tab. Use the OPEN PIZZINT link in the launcher window.');
     return false;
   }
 
   function renderPizzint() {
     const root=document.createElement('div'); root.className='panel-content pizzint-launcher';
     root.innerHTML=`
-      <div class="panel-eyebrow">OSINT LAUNCHER // LIVE THIRD-PARTY SITE</div>
+      <div class="panel-eyebrow">OSINT LAUNCHER // THIRD-PARTY SITE</div>
       <h2>PizzINT Watch</h2>
-      <p>PizzINT does not reliably permit its site to run inside another site's iframe. K4INU_OS therefore launches the real site directly in a compact browser window so the dashboard stays live.</p>
+      <p>The live PizzINT site cannot reliably run inside the K4INU_OS app window because the destination controls whether browsers may frame it. This launcher uses a normal browser link instead, which avoids iframe and popup-script failures.</p>
       <div class="pizzint-launch-card">
         <div class="pizzint-launch-mark">PZ</div>
-        <div><small>LIVE DESTINATION</small><strong>pizzint.watch</strong><span>Direct browser session // no iframe</span></div>
+        <div><small>LIVE DESTINATION</small><strong>pizzint.watch</strong><span>Direct external session // reliable fallback</span></div>
       </div>
       <div class="pizzint-launch-actions">
-        <a class="ui-button primary" href="https://www.pizzint.watch/" target="k4inu_pizzint_live" data-pizzint-link>LAUNCH LIVE WINDOW ↗</a>
-        <a class="ui-button" href="https://www.pizzint.watch/" target="_blank" rel="noreferrer">OPEN NEW TAB</a>
+        <a class="ui-button primary" href="https://www.pizzint.watch/" target="_blank" rel="noopener noreferrer">OPEN PIZZINT LIVE ↗</a>
+        <button class="ui-button" data-copy-pizzint>COPY URL</button>
       </div>
-      <p class="embed-note">Desktop browsers usually open a roughly 960×720 resizable window. Mobile browsers may use a normal tab instead.</p>`;
-    root.addEventListener('click', e => {
-      const link = e.target.closest('[data-pizzint-link]');
-      if (!link) return;
-      if (launchPizzintPopup(link)) e.preventDefault();
+      <p class="embed-note">The K4INU_OS window remains your launcher. The live third-party dashboard opens in its own browser tab because its framing policy is outside this site's control.</p>`;
+    root.addEventListener('click', async e => {
+      if (!e.target.closest('[data-copy-pizzint]')) return;
+      try { await navigator.clipboard.writeText('https://www.pizzint.watch/'); toast('PizzINT URL copied.'); }
+      catch { toast('https://www.pizzint.watch/'); }
     });
     return root;
   }
@@ -1304,7 +1352,6 @@
   function closeStart() { startMenu.classList.remove('open'); startMenu.setAttribute('aria-hidden','true'); startButton.setAttribute('aria-expanded','false'); startButton.classList.remove('open'); }
 
   document.addEventListener('click', e => {
-    const pz = e.target.closest('[data-pizzint-link]'); if (pz) { if (launchPizzintPopup(pz)) e.preventDefault(); return; }
     const play = e.target.closest('[data-radio-play]'); if (play) { e.preventDefault(); toggleRadio(); return; }
     const prev = e.target.closest('[data-radio-prev]'); if (prev) { e.preventDefault(); setRadioTrack(radioState.trackIndex - 1); return; }
     const next = e.target.closest('[data-radio-next]'); if (next) { e.preventDefault(); setRadioTrack(radioState.trackIndex + 1); return; }

@@ -533,3 +533,19 @@ a { color: inherit; }
 .pizzint-launch-card span { color:#7896b6; font-size:10px; }
 .pizzint-launch-actions { display:flex; gap:10px; flex-wrap:wrap; }
 .pizzint-launch-actions .ui-button { text-decoration:none; }
+
+
+/* v18 QR decoder + reliable PizzINT launcher */
+.qr-workbench { margin-top:18px; padding-top:16px; border-top:1px solid #254836; }
+.qr-head { display:flex; justify-content:space-between; gap:14px; align-items:flex-start; margin-bottom:10px; }
+.qr-head small { color:var(--amber); font-size:9px; letter-spacing:.14em; }
+.qr-head h3 { margin:3px 0 4px; font-size:16px; }
+.qr-head p { margin:0; color:#789889; font-size:10px; }
+.qr-grid { display:grid; grid-template-columns:minmax(180px,.8fr) minmax(260px,1.2fr); gap:12px; }
+.qr-grid > label { color:#759a87; font-size:9px; letter-spacing:.12em; }
+.qr-grid textarea { margin-top:6px; width:100%; min-height:170px; resize:vertical; border:1px solid #274b3a; background:#020604; color:#bff3d1; padding:12px; font:12px/1.5 ui-monospace,monospace; }
+.qr-drop { min-height:170px; position:relative; display:flex; flex-direction:column; gap:8px; align-items:center; justify-content:center; overflow:hidden; border:1px dashed #486a58; background:#040b07; cursor:pointer; text-align:center; padding:10px; }
+.qr-drop input { position:absolute; width:1px; height:1px; opacity:0; pointer-events:none; }
+.qr-drop > span { border:1px solid #315844; background:#0d291d; color:var(--green); padding:7px 10px; font-size:9px; }
+.qr-drop img { width:100%; max-height:210px; object-fit:contain; background:#fff; }
+@media (max-width:850px) { .qr-head { flex-direction:column; } .qr-grid { grid-template-columns:1fr; } }
