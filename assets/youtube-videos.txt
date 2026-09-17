@@ -1,0 +1,6 @@
+# K4INU Lock Lab playlist
+# One YouTube URL per line.
+# Optional format: Title | URL
+# Example:
+# Practice Lock 01 | https://youtu.be/VIDEO_ID
+

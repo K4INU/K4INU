@@ -12,7 +12,9 @@
     game: { title: 'TOOL TRAIL // operator game', icon: 'TT', status: '7-stage choose-the-right-tool run', width: 820, height: 620, render: renderToolTrail },
     toolkit: { title: 'CTF WORKBENCH // decoder toolkit', icon: 'CTF', status: 'local transforms // nothing leaves your browser', width: 860, height: 650, render: renderToolkit },
     feed: { title: 'THREAT FEED // vuln + hacker news', icon: 'RF', status: 'LIVE // CISA KEV // critical advisories // security news // v15', width: 900, height: 650, render: renderThreatFeed },
-    pizzint: { title: 'PIZZINT WATCH // external launcher', icon: 'PZ', status: 'third-party site // direct browser launch', width: 590, height: 420, render: renderPizzint }
+    pizzint: { title: 'PIZZINT WATCH // external launcher', icon: 'PZ', status: 'third-party site // direct browser launch', width: 590, height: 420, render: renderPizzint },
+    lockpick: { title: 'PIN//SET // practice lock trainer', icon: 'LP', status: 'authorized practice simulator // 6 training locks', width: 850, height: 660, render: renderLockTrainer },
+    videos: { title: 'LOCK LAB // YouTube player', icon: 'YT', status: 'playlist from assets/youtube-videos.txt', width: 900, height: 650, render: renderVideoPlayer }
   };
 
   const PROJECTS = [
@@ -328,6 +330,46 @@
     }
   ];
 
+
+  const LOCK_LEVELS = [
+    { name:'CLEAR TRAINER', pins:3, tension:[28,72], tolerance:16, note:'Wide feedback window. Learn the bind → lift → set loop.' },
+    { name:'FOUR PIN BENCH', pins:4, tension:[32,68], tolerance:13, note:'A little less forgiving; probe before lifting.' },
+    { name:'STANDARD FIVE', pins:5, tension:[35,65], tolerance:11, note:'Keep tension steady and avoid chasing springy pins.' },
+    { name:'MIXED CUTS', pins:5, tension:[38,62], tolerance:9, note:'Pin heights vary more. Small controlled lifts matter.' },
+    { name:'SIX PIN PRACTICE', pins:6, tension:[40,60], tolerance:8, note:'More pins, tighter feedback, same basic process.' },
+    { name:'FINAL DRILL', pins:6, tension:[42,58], tolerance:7, note:'A narrow practice window that rewards consistent feedback.' }
+  ];
+
+  function extractYouTubeId(value) {
+    const raw=String(value||'').trim();
+    try {
+      const u=new URL(raw);
+      const host=u.hostname.replace(/^www\./,'').toLowerCase();
+      if(host==='youtu.be') return u.pathname.split('/').filter(Boolean)[0] || '';
+      if(host==='youtube.com' || host==='m.youtube.com' || host==='music.youtube.com') {
+        if(u.pathname==='/watch') return u.searchParams.get('v') || '';
+        const parts=u.pathname.split('/').filter(Boolean);
+        if(['shorts','embed','live'].includes(parts[0])) return parts[1] || '';
+      }
+    } catch {}
+    return /^[A-Za-z0-9_-]{11}$/.test(raw) ? raw : '';
+  }
+
+  function parseVideoList(text) {
+    const rows=[];
+    String(text||'').split(/\r?\n/).forEach((line,index)=>{
+      const clean=line.trim();
+      if(!clean || clean.startsWith('#')) return;
+      let title='', url=clean;
+      const split=clean.indexOf('|');
+      if(split>-1){ title=clean.slice(0,split).trim(); url=clean.slice(split+1).trim(); }
+      const id=extractYouTubeId(url);
+      if(!id) return;
+      rows.push({ id, url, title:title || `Lock Picking Video ${String(rows.length+1).padStart(2,'0')}` });
+    });
+    return rows;
+  }
+
   const template = document.getElementById('windowTemplate');
   const taskButtons = document.getElementById('taskButtons');
   const startButton = document.getElementById('startButton');
@@ -492,10 +534,12 @@
           print('whoami               operator profile');
           print('ls                   list workspace items');
           print('projects             list project repositories');
-          print('open <name>          open apps: projects/badges/radio/game/toolkit/feed/pizzint');
+          print('open <name>          open apps: projects/badges/radio/game/toolkit/feed/pizzint/lockpick/videos');
           print('cat about            print profile summary');
           print('neofetch             system summary');
           print('radio                open synthwave player');
+          print('lockpick             open practice lock trainer');
+          print('videos               open YouTube lock-lab playlist');
           print('game                 open tool-selection game');
           print('toolkit              open CTF decoder workbench');
           print('feed                 open threat + vulnerability feed');
@@ -519,7 +563,7 @@
           print('Tip: open projects', 'amber');
           break;
         case 'open': {
-          const aliases = { project:'projects', projects:'projects', badge:'credentials', badges:'credentials', credentials:'credentials', defcon:'credentials', hrv:'credentials', ham:'credentials', about:'about', resources:'resources', resource:'resources', system:'system', terminal:'terminal', radio:'radio', music:'radio', signal:'radio', game:'game', trail:'game', tooltrail:'game', tools:'game', toolkit:'toolkit', ctf:'toolkit', decode:'toolkit', decoder:'toolkit', feed:'feed', threats:'feed', news:'feed', pizzint:'pizzint', pizza:'pizzint' };
+          const aliases = { project:'projects', projects:'projects', badge:'credentials', badges:'credentials', credentials:'credentials', defcon:'credentials', hrv:'credentials', ham:'credentials', about:'about', resources:'resources', resource:'resources', system:'system', terminal:'terminal', radio:'radio', music:'radio', signal:'radio', game:'game', trail:'game', tooltrail:'game', tools:'game', toolkit:'toolkit', ctf:'toolkit', decode:'toolkit', decoder:'toolkit', feed:'feed', threats:'feed', news:'feed', pizzint:'pizzint', pizza:'pizzint', lockpick:'lockpick', lock:'lockpick', pick:'lockpick', pinset:'lockpick', videos:'videos', video:'videos', youtube:'videos', yt:'videos' };
           if (aliases[arg] === 'pizzint') openApp('pizzint');
           else if (aliases[arg]) openApp(aliases[arg]);
           else {
@@ -556,7 +600,9 @@
         case 'game': case 'trail': case 'tools': openApp('game'); break;
         case 'toolkit': case 'ctf': case 'decode': openApp('toolkit'); break;
         case 'feed': case 'threats': case 'news': openApp('feed'); break;
-        case 'pizzint': case 'pizza': launchPizzintDirect(); break;
+        case 'pizzint': case 'pizza': openApp('pizzint'); break;
+        case 'lockpick': case 'lock': case 'pick': openApp('lockpick'); break;
+        case 'videos': case 'video': case 'youtube': case 'yt': openApp('videos'); break;
         case 'play': playRadio(); print('Signal FM: transmitting.', 'dim'); break;
         case 'pause': pauseRadio(); print('Signal FM: standby.', 'dim'); break;
         case 'github':
@@ -1201,6 +1247,122 @@
   }
 
 
+
+  function renderLockTrainer() {
+    const root=document.createElement('div'); root.className='panel-content lock-trainer';
+    const state={ level:0, tension:48, selected:0, lift:0, sets:[], attempts:0, message:'Select a pin, probe it, then act on the feedback.' };
+    let lock=null;
+
+    function buildLock() {
+      const cfg=LOCK_LEVELS[state.level];
+      const order=Array.from({length:cfg.pins},(_,i)=>i).sort(()=>Math.random()-.5);
+      const heights=Array.from({length:cfg.pins},()=>28+Math.floor(Math.random()*58));
+      lock={ cfg, order, heights, next:0 };
+      state.selected=0; state.lift=0; state.sets=[]; state.attempts=0;
+      state.message='Start with light, steady tension and probe for the pin that feels different.';
+    }
+
+    function currentBinder(){ return lock.order[lock.next]; }
+    function tensionOK(){ return state.tension>=lock.cfg.tension[0] && state.tension<=lock.cfg.tension[1]; }
+    function pinState(i){ if(state.sets.includes(i)) return 'set'; if(!tensionOK()) return state.tension<lock.cfg.tension[0]?'springy':'stalled'; return i===currentBinder()?'binding':'springy'; }
+    function feedback(i){
+      const s=pinState(i);
+      if(s==='set') return 'SET — already at the shear line.';
+      if(s==='binding') return 'BINDING — this is the pin giving the strongest resistance.';
+      if(s==='stalled') return 'STALLED — tension is masking useful feedback.';
+      return 'SPRINGY — this pin is not the current binder.';
+    }
+
+    function draw(){
+      const cfg=lock.cfg;
+      const complete=lock.next>=cfg.pins;
+      root.innerHTML=`
+        <div class="panel-eyebrow">PHYSICAL SECURITY LAB // AUTHORIZED PRACTICE ONLY</div>
+        <div class="lock-head"><div><h2>PIN//SET</h2><p>A simplified pin-tumbler practice simulator. Use the concepts only on transparent trainers or locks you own / have explicit permission to practice on.</p></div><span class="lock-level">${state.level+1}/${LOCK_LEVELS.length}</span></div>
+        <div class="lock-legal">TRAINING NOTE // Real locks vary. This teaches feedback concepts, not bypass of secured property.</div>
+        ${complete ? `
+          <section class="lock-complete"><strong>LOCK ${state.level+1} OPEN</strong><p>${esc(cfg.name)} cleared in ${state.attempts} lift attempts.</p>${state.level<LOCK_LEVELS.length-1?'<button class="ui-button primary" data-lock-next>NEXT TRAINING LOCK</button>':'<button class="ui-button primary" data-lock-restart>RESTART COURSE</button>'}</section>` : `
+          <div class="lock-status"><div><small>TRAINER</small><strong>${esc(cfg.name)}</strong></div><div><small>LESSON</small><span>${esc(cfg.note)}</span></div></div>
+          <div class="lock-cylinder" aria-label="Virtual pin tumbler">
+            ${Array.from({length:cfg.pins},(_,i)=>{ const st=pinState(i); const h=lock.heights[i]; return `<button class="lock-pin ${state.selected===i?'selected':''} ${st==='set'?'set':''}" data-lock-pin="${i}" aria-label="Pin ${i+1}"><span class="pin-number">${i+1}</span><i class="pin-stack"><b style="height:${Math.max(12,100-h)}%"></b><em style="height:${h}%"></em></i><small>${st==='set'?'SET':state.selected===i?'SELECTED':'PIN'}</small></button>`; }).join('')}
+          </div>
+          <div class="lock-controls">
+            <label>TENSION <input type="range" min="0" max="100" value="${state.tension}" data-lock-tension /><output>${state.tension}%</output></label>
+            <label>PIN LIFT <input type="range" min="0" max="100" value="${state.lift}" data-lock-lift /><output>${state.lift}%</output></label>
+          </div>
+          <div class="lock-actions"><button class="ui-button" data-lock-probe>PROBE PIN ${state.selected+1}</button><button class="ui-button primary" data-lock-lift-btn>APPLY LIFT</button><button class="ui-button" data-lock-reset>RESET LOCK</button></div>
+          <div class="lock-feedback"><small>TACTILE FEEDBACK</small><strong>${esc(state.message)}</strong></div>
+          <div class="lock-guide"><span>1 // Hold steady tension</span><span>2 // Probe for the binder</span><span>3 // Lift only that pin</span><span>4 // Repeat until the plug turns</span></div>`}
+      `;
+    }
+
+    function applyLift(){
+      if(lock.next>=lock.cfg.pins) return;
+      state.attempts++;
+      const sel=state.selected, binder=currentBinder();
+      if(!tensionOK()){
+        state.message=state.tension<lock.cfg.tension[0]?'Too little tension: the pins all feel springy and nothing binds.':'Too much tension: the stack is stalled and useful feedback disappears.'; draw(); return;
+      }
+      if(sel!==binder){ state.message=`Pin ${sel+1} is springy. Probe again and look for the binder before lifting.`; draw(); return; }
+      const delta=state.lift-lock.heights[sel];
+      if(Math.abs(delta)<=lock.cfg.tolerance){
+        state.sets.push(sel); lock.next++; state.lift=0;
+        state.message=lock.next>=lock.cfg.pins?'Clean set sequence. The virtual plug turned.':`Pin ${sel+1} set. Keep tension steady and find the next binder.`;
+      } else if(delta>lock.cfg.tolerance){
+        state.message=`Pin ${sel+1} was lifted past its target — an overset. Ease off and reset this training lock.`;
+      } else {
+        state.message=`Pin ${sel+1} is still binding. It needs a little more controlled lift.`;
+      }
+      draw();
+    }
+
+    root.addEventListener('click',e=>{
+      const pin=e.target.closest('[data-lock-pin]'); if(pin){ state.selected=Number(pin.dataset.lockPin); state.message=`Pin ${state.selected+1}: ${feedback(state.selected)}`; draw(); return; }
+      if(e.target.closest('[data-lock-probe]')){ state.message=`Pin ${state.selected+1}: ${feedback(state.selected)}`; draw(); return; }
+      if(e.target.closest('[data-lock-lift-btn]')){ applyLift(); return; }
+      if(e.target.closest('[data-lock-reset]')){ buildLock(); draw(); return; }
+      if(e.target.closest('[data-lock-next]')){ state.level++; buildLock(); draw(); return; }
+      if(e.target.closest('[data-lock-restart]')){ state.level=0; buildLock(); draw(); return; }
+    });
+    root.addEventListener('input',e=>{
+      if(e.target.matches('[data-lock-tension]')){ state.tension=Number(e.target.value); state.message=state.tension<lock.cfg.tension[0]?'Tension feels too loose.':state.tension>lock.cfg.tension[1]?'Tension feels too heavy.':'Tension is in the useful practice range.'; draw(); }
+      if(e.target.matches('[data-lock-lift]')){ state.lift=Number(e.target.value); const out=e.target.parentElement.querySelector('output'); if(out) out.textContent=`${state.lift}%`; }
+    });
+    buildLock(); draw(); return root;
+  }
+
+  function renderVideoPlayer() {
+    const root=document.createElement('div'); root.className='panel-content video-lab';
+    let videos=[], active=0;
+    root.innerHTML=`
+      <div class="panel-eyebrow">LOCK LAB // YOUTUBE PLAYLIST</div>
+      <div class="video-head"><div><h2>Lock Picking Videos</h2><p>Playlist is loaded from <code>assets/youtube-videos.txt</code>. Put one YouTube link per line, or use <code>Title | URL</code>.</p></div><button class="ui-button" data-video-refresh>REFRESH LIST</button></div>
+      <div class="video-layout"><div class="video-stage" data-video-stage><div class="video-empty">LOADING VIDEO LIST…</div></div><aside class="video-playlist" data-video-list></aside></div>
+      <div class="video-file-note">Example: <code>Practice Lock 01 | https://youtu.be/VIDEO_ID</code> &nbsp; // &nbsp; Lines beginning with <code>#</code> are ignored.</div>`;
+    const stage=root.querySelector('[data-video-stage]'), list=root.querySelector('[data-video-list]');
+
+    const paint=()=>{
+      if(!videos.length){ stage.innerHTML='<div class="video-empty"><strong>NO VIDEOS FOUND</strong><span>Add YouTube links to assets/youtube-videos.txt, commit the file, then press REFRESH LIST.</span></div>'; list.innerHTML=''; return; }
+      const v=videos[Math.max(0,Math.min(active,videos.length-1))];
+      stage.innerHTML=`<div class="youtube-frame"><iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(v.id)}?rel=0" title="${esc(v.title)}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div><div class="video-now"><small>NOW PLAYING</small><strong>${esc(v.title)}</strong><a href="${esc(v.url)}" target="_blank" rel="noreferrer">OPEN ON YOUTUBE ↗</a></div>`;
+      list.innerHTML=videos.map((item,i)=>`<button class="video-item ${i===active?'active':''}" data-video-index="${i}"><span>${String(i+1).padStart(2,'0')}</span><strong>${esc(item.title)}</strong><small>${esc(item.id)}</small></button>`).join('');
+    };
+
+    const load=async()=>{
+      stage.innerHTML='<div class="video-empty">READING assets/youtube-videos.txt…</div>'; list.innerHTML='';
+      try{
+        const res=await fetch(`/assets/youtube-videos.txt?v=19f1`,{cache:'no-store'});
+        if(!res.ok) throw new Error(`HTTP ${res.status}`);
+        videos=parseVideoList(await res.text()); active=0; paint();
+      }catch(err){ stage.innerHTML=`<div class="video-empty"><strong>VIDEO LIST UNAVAILABLE</strong><span>${esc(err.message)}. Make sure assets/youtube-videos.txt exists and test through https://kainu.codes or a local web server.</span></div>`; }
+    };
+    root.addEventListener('click',e=>{
+      const item=e.target.closest('[data-video-index]'); if(item){ active=Number(item.dataset.videoIndex); paint(); return; }
+      if(e.target.closest('[data-video-refresh]')) load();
+    });
+    load(); return root;
+  }
+
   function renderToolTrail() {
     const root = document.createElement('div');
     root.className = 'panel-content tooltrail-panel';
@@ -1397,6 +1559,8 @@
       '[  OK  ] Indexing Ham Radio Village // Pinky + the Brain Fox // DC34',
       '[  OK  ] Starting K4INU SIGNAL//FM audio service',
       '[  OK  ] Loading Tool Trail operator mini-game',
+      '[  OK  ] Mounting PIN//SET practice lock trainer',
+      '[  OK  ] Reading Lock Lab YouTube playlist',
       '[  OK  ] Mounting CTF Workbench transforms',
       '[  OK  ] Connecting live RSS threat feed',
       '[  OK  ] Registering PizzINT live popup launcher',

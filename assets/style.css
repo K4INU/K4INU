@@ -549,3 +549,61 @@ a { color: inherit; }
 .qr-drop > span { border:1px solid #315844; background:#0d291d; color:var(--green); padding:7px 10px; font-size:9px; }
 .qr-drop img { width:100%; max-height:210px; object-fit:contain; background:#fff; }
 @media (max-width:850px) { .qr-head { flex-direction:column; } .qr-grid { grid-template-columns:1fr; } }
+
+
+/* v19 PIN//SET + Lock Lab */
+.lock-glyph { border-color:rgba(244,186,55,.55); color:#ffd36f; box-shadow:inset 0 0 16px rgba(244,186,55,.08),0 8px 20px rgba(0,0,0,.28); }
+.video-glyph { border-color:rgba(255,70,84,.55); color:#ff7f8c; box-shadow:inset 0 0 16px rgba(255,70,84,.08),0 8px 20px rgba(0,0,0,.28); }
+.lock-trainer { background:radial-gradient(circle at 15% 20%,rgba(225,166,49,.10),transparent 34%),#050a08; }
+.lock-head { display:flex; justify-content:space-between; gap:16px; align-items:flex-start; }
+.lock-head p { max-width:610px; color:#90aa9b; font-size:11px; }
+.lock-level { border:1px solid #765d24; color:#ffd26a; background:#1b1609; padding:7px 10px; font-size:10px; letter-spacing:.12em; }
+.lock-legal { border-left:3px solid #d8a934; padding:8px 10px; margin:8px 0 13px; background:rgba(86,63,10,.16); color:#b9a56f; font-size:9px; letter-spacing:.07em; }
+.lock-status { display:grid; grid-template-columns:180px 1fr; gap:10px; margin-bottom:12px; }
+.lock-status > div { border:1px solid #304b3d; background:#07130e; padding:10px; }
+.lock-status small,.lock-feedback small { display:block; color:#6d897a; font-size:8px; letter-spacing:.14em; margin-bottom:4px; }
+.lock-status strong { color:#e9d795; }.lock-status span { color:#91aa9d; font-size:10px; }
+.lock-cylinder { min-height:220px; display:flex; justify-content:center; align-items:flex-end; gap:8px; padding:26px 18px 18px; border:1px solid #43583f; background:linear-gradient(180deg,#11170f,#080c09 52%,#161207); box-shadow:inset 0 -8px 0 #6a5522,inset 0 -11px 0 #2b2410; overflow:hidden; }
+.lock-pin { width:72px; min-width:52px; height:175px; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; gap:5px; border:1px solid #4b563d; background:#11170f; color:#809587; cursor:pointer; padding:7px; }
+.lock-pin.selected { border-color:#e0af3a; box-shadow:0 0 0 1px rgba(224,175,58,.14),inset 0 0 20px rgba(224,175,58,.05); color:#ffd56e; }
+.lock-pin.set { border-color:#3f9b6b; background:#0b2118; color:#7dffb2; }
+.pin-number { font-size:11px; font-weight:900; }
+.pin-stack { height:122px; width:26px; display:flex; flex-direction:column; justify-content:flex-end; background:#050706; border:1px solid #3d4432; }
+.pin-stack b,.pin-stack em { display:block; width:100%; min-height:5px; }
+.pin-stack b { background:#6f704d; border-bottom:2px solid #e3c55d; }
+.pin-stack em { background:linear-gradient(90deg,#675318,#c9a83f,#675318); }
+.lock-pin.set .pin-stack b { background:#49785c; }.lock-pin.set .pin-stack em { background:linear-gradient(90deg,#1f6945,#65d699,#1f6945); }
+.lock-pin small { font-size:8px; letter-spacing:.08em; }
+.lock-controls { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px; }
+.lock-controls label { display:grid; grid-template-columns:92px 1fr 45px; align-items:center; gap:8px; padding:10px; border:1px solid #2b4938; background:#07140f; color:#7d9a8a; font-size:9px; letter-spacing:.12em; }
+.lock-controls input { width:100%; accent-color:#d8aa38; }.lock-controls output { color:#f2c75f; text-align:right; }
+.lock-actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+.lock-feedback { margin-top:10px; border:1px solid #315242; background:#06110d; padding:11px; }
+.lock-feedback strong { display:block; color:#d9e9e0; font-size:11px; }
+.lock-guide { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-top:10px; }
+.lock-guide span { border:1px solid #263f32; background:#07110d; color:#718d7e; padding:8px; font-size:8px; }
+.lock-complete { border:1px solid #3d805d; background:linear-gradient(140deg,rgba(11,47,31,.8),rgba(42,33,8,.55)); padding:22px; }
+.lock-complete strong { display:block; color:#7dffb2; font-size:24px; margin-bottom:6px; }
+.lock-complete p { color:#9ab3a5; }
+.video-lab { background:radial-gradient(circle at 85% 10%,rgba(255,52,70,.08),transparent 34%),#05080b; }
+.video-head { display:flex; justify-content:space-between; gap:14px; align-items:flex-start; }
+.video-head p { max-width:600px; color:#8ea0aa; font-size:11px; }.video-head code,.video-file-note code { color:#ff8b96; }
+.video-layout { display:grid; grid-template-columns:minmax(0,1fr) 270px; gap:12px; margin-top:14px; }
+.video-stage { min-width:0; }.youtube-frame { position:relative; width:100%; aspect-ratio:16/9; border:1px solid #384853; background:#000; overflow:hidden; }
+.youtube-frame iframe { position:absolute; inset:0; width:100%; height:100%; border:0; }
+.video-now { display:grid; grid-template-columns:1fr auto; gap:5px 10px; padding:10px; border:1px solid #2c404d; border-top:0; background:#071018; }
+.video-now small { grid-column:1/-1; color:#7a8f9a; font-size:8px; letter-spacing:.14em; }.video-now strong { color:#e7f0f5; }.video-now a { color:#ff7180; text-decoration:none; font-size:9px; }
+.video-playlist { display:flex; flex-direction:column; gap:6px; max-height:490px; overflow:auto; }
+.video-item { display:grid; grid-template-columns:30px 1fr; gap:3px 8px; border:1px solid #263b48; background:#071018; color:#8197a3; padding:9px; text-align:left; cursor:pointer; }
+.video-item:hover,.video-item.active { border-color:#bb3c4b; background:#18090d; }.video-item > span { grid-row:1/3; color:#ff6473; font-weight:900; }.video-item strong { color:#cbd9e0; font-size:10px; }.video-item small { color:#566d79; font-size:8px; }
+.video-empty { min-height:320px; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:8px; border:1px dashed #3a4a53; background:#060b0f; color:#718892; text-align:center; padding:24px; }
+.video-empty strong { color:#e4edf1; }.video-empty span { max-width:520px; font-size:10px; line-height:1.5; }
+.video-file-note { margin-top:10px; color:#637985; font-size:9px; }
+@media (max-width:850px){
+  .lock-head,.video-head { flex-direction:column; }
+  .lock-status,.lock-controls,.video-layout { grid-template-columns:1fr; }
+  .lock-cylinder { justify-content:flex-start; overflow-x:auto; }
+  .lock-pin { flex:0 0 58px; }
+  .lock-guide { grid-template-columns:1fr 1fr; }
+  .video-playlist { max-height:260px; }
+}
