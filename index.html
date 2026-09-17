@@ -10,7 +10,7 @@
   <meta property="og:type" content="website" />
   <title>K4INU_OS // DFIR Workstation</title>
   <link rel="icon" href="/assets/favicon.svg?v=15f1" type="image/svg+xml" />
-  <link rel="stylesheet" href="/assets/style.css?v=19f1" />
+  <link rel="stylesheet" href="/assets/style.css?v=21f1" />
 </head>
 <body>
   <noscript>
@@ -100,18 +100,17 @@
       <div class="start-footer">K4INU_OS v1.0 // STATIC BUILD</div>
     </section>
 
-    <section class="signal-dock" id="signalDock" aria-label="Synthwave music player">
-      <button class="signal-main" data-open="radio" aria-label="Open Signal FM">
-        <span class="signal-led"></span>
-        <span><small>K4INU SIGNAL//FM</small><strong data-radio-track>NIGHT SHIFT</strong></span>
-      </button>
-      <div class="signal-bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
-      <button class="signal-play" data-radio-play aria-label="Play music">▶</button>
-    </section>
-
     <footer class="taskbar">
       <button class="start-button" id="startButton" aria-expanded="false" aria-controls="startMenu"><span class="kmark">K4</span> START</button>
       <div class="task-buttons" id="taskButtons" aria-label="Open windows"></div>
+      <section class="signal-dock signal-taskbar" id="signalDock" aria-label="Synthwave music player">
+        <button class="signal-main" data-open="radio" aria-label="Open Signal FM">
+          <span class="signal-led"></span>
+          <span><small>K4INU SIGNAL//FM</small><strong data-radio-track>NIGHT SHIFT</strong></span>
+        </button>
+        <div class="signal-bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+        <button class="signal-play" data-radio-play aria-label="Play music">▶</button>
+      </section>
       <div class="tray"><span class="tray-led" title="network"></span><span id="taskClock">--:--</span></div>
     </footer>
   </main>
@@ -132,6 +131,6 @@
   </template>
 
   <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
-  <script src="/assets/app.js?v=19f1"></script>
+  <script src="/assets/app.js?v=21f1"></script>
 </body>
 </html>
